@@ -2,147 +2,327 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Solar System Invitation</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 :root{--sky:#03050d;--blue:#38bdf8;--purple:#7c3aed;--gold:#f59e0b;}
-html,body{width:100vw;height:100vh;overflow:hidden;background:var(--sky);font-family:'Rajdhani',sans-serif;cursor:none;}
+html,body{width:100vw;height:100vh;overflow:hidden;background:var(--sky);font-family:'Rajdhani',sans-serif;}
 
-/* ── MINIATURE ORBIT SYSTEM CURSOR ── */
+/* ── HIDE CUSTOM CURSOR ON MOBILE ── */
+@media (pointer: fine) {
+  body { cursor: none; }
+  #cur-system { display: block; }
+}
+@media (pointer: coarse) {
+  #cur-system { display: none; }
+}
+
+/* ── MINIATURE ORBIT SYSTEM CURSOR (desktop only) ── */
 #cur-system {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 0;
-  height: 0;
+  top: 0; left: 0;
+  width: 0; height: 0;
   pointer-events: none;
   z-index: 99999;
 }
 #cur-dot {
   position: absolute;
-  width: 6px;
-  height: 6px;
+  width: 6px; height: 6px;
   background: #ffffff;
   border-radius: 50%;
   transform: translate(-50%, -50%);
-  box-shadow: 0 0 10px #ffffff, 0 0 20px rgba(56, 189, 248, 0.5);
+  box-shadow: 0 0 10px #ffffff, 0 0 20px rgba(56,189,248,0.5);
 }
 #cur-ring {
   position: absolute;
-  width: 38px;
-  height: 38px;
-  border: 1px dashed rgba(56, 189, 248, 0.4);
+  width: 38px; height: 38px;
+  border: 1px dashed rgba(56,189,248,0.4);
   border-radius: 50%;
   transform: translate(-50%, -50%);
-  transition: width 0.25s ease, height 0.25s ease, border-color 0.25s ease;
-  animation: cursorOrbitSpin 3s linear infinite; 
+  transition: width .25s, height .25s, border-color .25s;
+  animation: cursorOrbitSpin 3s linear infinite;
 }
 #cur-moon {
   position: absolute;
-  top: -3px;
-  left: 50%;
-  width: 5px;
-  height: 5px;
+  top: -3px; left: 50%;
+  width: 5px; height: 5px;
   background: var(--blue);
   border-radius: 50%;
   transform: translateX(-50%);
   box-shadow: 0 0 8px var(--blue);
-  transition: background 0.25s ease, box-shadow 0.25s ease;
+  transition: background .25s, box-shadow .25s;
 }
-
-body.hov #cur-ring {
-  width: 56px;
-  height: 56px;
-  border-color: rgba(245, 158, 11, 0.6);
-}
-body.hov #cur-moon {
-  background: var(--gold);
-  box-shadow: 0 0 8px var(--gold);
-}
-body.click #cur-ring {
-  width: 20px;
-  height: 20px;
-  border-color: #e879f9;
-}
-
+body.hov #cur-ring { width: 56px; height: 56px; border-color: rgba(245,158,11,.6); }
+body.hov #cur-moon { background: var(--gold); box-shadow: 0 0 8px var(--gold); }
+body.click #cur-ring { width: 20px; height: 20px; border-color: #e879f9; }
 @keyframes cursorOrbitSpin {
-  from { transform: translate(-50%, -50%) rotate(0deg); }
-  to { transform: translate(-50%, -50%) rotate(360deg); }
+  from { transform: translate(-50%,-50%) rotate(0deg); }
+  to { transform: translate(-50%,-50%) rotate(360deg); }
 }
 
 /* ── STARFIELD ── */
-#starfield{position:fixed;inset:0;z-index:0;}
+#starfield { position: fixed; inset: 0; z-index: 0; }
 
 /* ── SOLAR SYSTEM ── */
-#solar{position:fixed;inset:0;display:flex;justify-content:center;align-items:center;z-index:1;}
-#sun{position:absolute;width:8.5vmin;height:8.5vmin;border-radius:50%;transform:translate(-50%,-50%);background:radial-gradient(circle at 38% 32%,#fffde7,#fbbf24 38%,#f59e0b 68%,#92400e);box-shadow:0 0 3vmin 1vmin rgba(251,191,36,.55),0 0 8vmin 3vmin rgba(245,158,11,.28),0 0 15vmin 6vmin rgba(234,88,12,.1);animation:sunPulse 4s ease-in-out infinite;}
-@keyframes sunPulse{0%,100%{box-shadow:0 0 3vmin 1vmin rgba(251,191,36,.55),0 0 8vmin 3vmin rgba(245,158,11,.28),0 0 15vmin 6vmin rgba(234,88,12,.1);}50%{box-shadow:0 0 4.5vmin 2vmin rgba(251,191,36,.7),0 0 11vmin 4vmin rgba(245,158,11,.38),0 0 18vmin 8vmin rgba(234,88,12,.15);}}
+#solar {
+  position: fixed; inset: 0;
+  display: flex; justify-content: center; align-items: center;
+  z-index: 1;
+}
 
-.oring{position:absolute;border-radius:50%;border:1px solid rgba(255,255,255,.06);transform:translate(-50%,-50%) scaleY(0.44);top:50%;left:50%;}
-.parm{position:absolute;top:50%;left:50%;width:0;height:0;transform-origin:0 0;animation-timing-function:linear;animation-iteration-count:infinite;}
+/* Scale down orbit rings on mobile */
+:root {
+  --orb-scale: 1;
+}
+@media (max-width: 480px) {
+  :root { --orb-scale: 0.62; }
+}
+@media (max-width: 360px) {
+  :root { --orb-scale: 0.52; }
+}
 
-@keyframes rev{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
-@keyframes crev{from{transform:rotate(0deg);}to{transform:rotate(-360deg);}}
+#sun {
+  position: absolute;
+  width: 8.5vmin; height: 8.5vmin;
+  border-radius: 50%;
+  transform: translate(-50%,-50%);
+  background: radial-gradient(circle at 38% 32%,#fffde7,#fbbf24 38%,#f59e0b 68%,#92400e);
+  box-shadow: 0 0 3vmin 1vmin rgba(251,191,36,.55),0 0 8vmin 3vmin rgba(245,158,11,.28),0 0 15vmin 6vmin rgba(234,88,12,.1);
+  animation: sunPulse 4s ease-in-out infinite;
+}
+@keyframes sunPulse {
+  0%,100%{box-shadow:0 0 3vmin 1vmin rgba(251,191,36,.55),0 0 8vmin 3vmin rgba(245,158,11,.28),0 0 15vmin 6vmin rgba(234,88,12,.1);}
+  50%{box-shadow:0 0 4.5vmin 2vmin rgba(251,191,36,.7),0 0 11vmin 4vmin rgba(245,158,11,.38),0 0 18vmin 8vmin rgba(234,88,12,.15);}
+}
 
-.parm-mercury{animation:rev 6s linear infinite;} .parm-venus{animation:rev 9.5s linear infinite;} .parm-earth{animation:rev 14s linear infinite;} .parm-mars{animation:rev 21s linear infinite;} .parm-jupiter{animation:rev 34s linear infinite;} .parm-saturn{animation:rev 52s linear infinite;} .parm-uranus{animation:rev 74s linear infinite;} .parm-neptune{animation:rev 106s linear infinite;}
-.pbody{position:absolute;border-radius:50%;transform:translateY(-50%);}
-.pbody-mercury{animation:crev 6s linear infinite;} .pbody-venus{animation:crev 9.5s linear infinite;} .pbody-earth{animation:crev 14s linear infinite;} .pbody-mars{animation:crev 21s linear infinite;} .pbody-jupiter{animation:crev 34s linear infinite;} .pbody-saturn{animation:crev 52s linear infinite;} .pbody-uranus{animation:crev 74s linear infinite;} .pbody-neptune{animation:crev 106s linear infinite;}
+.oring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,.06);
+  transform: translate(-50%,-50%) scaleY(0.44);
+  top: 50%; left: 50%;
+}
 
-.mercury-v{width:1.2vmin;height:1.2vmin;background:radial-gradient(circle at 35% 30%,#d1d5db,#4b5563);}
-.venus-v{width:2.2vmin;height:2.2vmin;background:radial-gradient(circle at 35% 28%,#fef9c3,#d97706,#451a03);}
-.earth-v{width:2.5vmin;height:2.5vmin;background:radial-gradient(circle at 35% 30%,#7dd3fc,#2563eb 55%,#0f172a);box-shadow:0 0 1vmin rgba(56,189,248,.45);}
-.mars-v{width:1.8vmin;height:1.8vmin;background:radial-gradient(circle at 30% 30%,#fb923c,#7f1d1d);}
-.jupiter-v{width:5.5vmin;height:5.5vmin;background:repeating-linear-gradient(to bottom,#92400e 0%,#fef3c7 11%,#78350f 22%,#fef08a 33%,#a16207 44%,#fef3c7 55%,#78350f 66%,#ca8a04 77%,#a16207 88%,#fef3c7 100%);box-shadow:0 0 1.5vmin rgba(234,179,8,.22);}
-.saturn-v{width:4.5vmin;height:4.5vmin;background:radial-gradient(circle at 35% 28%,#fef9c3,#a16207,#78350f);overflow:visible;}
-.saturn-v::before{content:'';position:absolute;top:50%;left:50%;width:9.5vmin;height:1.8vmin;border:0.3vmin solid rgba(234,179,8,.42);border-radius:50%;transform:translate(-50%,-50%) rotate(-12deg);z-index:-1;}
-.uranus-v{width:3.2vmin;height:3.2vmin;background:radial-gradient(circle at 34% 30%,#a5f3fc,#0891b2,#0c4a6e);box-shadow:0 0 1vmin rgba(6,182,212,.32);}
-.neptune-v{width:3vmin;height:3vmin;background:radial-gradient(circle at 34% 30%,#93c5fd,#1d4ed8,#0f172a);}
-.plabel{position:absolute;top:calc(100% + 5px);left:50%;transform:translateX(-50%);font-size:clamp(8px, 1vmin, 11px);letter-spacing:1.5px;color:rgba(255,255,255,.35);text-transform:uppercase;white-space:nowrap;font-family:'Rajdhani',sans-serif;font-weight:600;}
+/* Mobile: shrink all orbit radii */
+@media (max-width: 480px) {
+  .oring-1  { width: 9.3vmin !important;  height: 9.3vmin !important; }
+  .oring-2  { width: 14.3vmin !important; height: 14.3vmin !important; }
+  .oring-3  { width: 19.2vmin !important; height: 19.2vmin !important; }
+  .oring-4  { width: 24.8vmin !important; height: 24.8vmin !important; }
+  .oring-5  { width: 32.9vmin !important; height: 32.9vmin !important; }
+  .oring-6  { width: 40.9vmin !important; height: 40.9vmin !important; }
+  .oring-7  { width: 49.0vmin !important; height: 49.0vmin !important; }
+  .oring-8  { width: 57.0vmin !important; height: 57.0vmin !important; }
+}
+
+.parm {
+  position: absolute; top: 50%; left: 50%;
+  width: 0; height: 0;
+  transform-origin: 0 0;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+@keyframes rev  { from{transform:rotate(0deg);}  to{transform:rotate(360deg);} }
+@keyframes crev { from{transform:rotate(0deg);}  to{transform:rotate(-360deg);} }
+
+.parm-mercury { animation: rev   6s linear infinite; }
+.parm-venus   { animation: rev   9.5s linear infinite; }
+.parm-earth   { animation: rev  14s linear infinite; }
+.parm-mars    { animation: rev  21s linear infinite; }
+.parm-jupiter { animation: rev  34s linear infinite; }
+.parm-saturn  { animation: rev  52s linear infinite; }
+.parm-uranus  { animation: rev  74s linear infinite; }
+.parm-neptune { animation: rev 106s linear infinite; }
+
+.pbody {
+  position: absolute;
+  border-radius: 50%;
+  transform: translateY(-50%);
+}
+.pbody-mercury { animation: crev   6s linear infinite; }
+.pbody-venus   { animation: crev   9.5s linear infinite; }
+.pbody-earth   { animation: crev  14s linear infinite; }
+.pbody-mars    { animation: crev  21s linear infinite; }
+.pbody-jupiter { animation: crev  34s linear infinite; }
+.pbody-saturn  { animation: crev  52s linear infinite; }
+.pbody-uranus  { animation: crev  74s linear infinite; }
+.pbody-neptune { animation: crev 106s linear infinite; }
+
+.mercury-v { width:1.2vmin;height:1.2vmin;background:radial-gradient(circle at 35% 30%,#d1d5db,#4b5563); }
+.venus-v   { width:2.2vmin;height:2.2vmin;background:radial-gradient(circle at 35% 28%,#fef9c3,#d97706,#451a03); }
+.earth-v   { width:2.5vmin;height:2.5vmin;background:radial-gradient(circle at 35% 30%,#7dd3fc,#2563eb 55%,#0f172a);box-shadow:0 0 1vmin rgba(56,189,248,.45); }
+.mars-v    { width:1.8vmin;height:1.8vmin;background:radial-gradient(circle at 30% 30%,#fb923c,#7f1d1d); }
+.jupiter-v { width:5.5vmin;height:5.5vmin;background:repeating-linear-gradient(to bottom,#92400e 0%,#fef3c7 11%,#78350f 22%,#fef08a 33%,#a16207 44%,#fef3c7 55%,#78350f 66%,#ca8a04 77%,#a16207 88%,#fef3c7 100%);box-shadow:0 0 1.5vmin rgba(234,179,8,.22); }
+.saturn-v  { width:4.5vmin;height:4.5vmin;background:radial-gradient(circle at 35% 28%,#fef9c3,#a16207,#78350f);overflow:visible; }
+.saturn-v::before { content:'';position:absolute;top:50%;left:50%;width:9.5vmin;height:1.8vmin;border:.3vmin solid rgba(234,179,8,.42);border-radius:50%;transform:translate(-50%,-50%) rotate(-12deg);z-index:-1; }
+.uranus-v  { width:3.2vmin;height:3.2vmin;background:radial-gradient(circle at 34% 30%,#a5f3fc,#0891b2,#0c4a6e);box-shadow:0 0 1vmin rgba(6,182,212,.32); }
+.neptune-v { width:3vmin;height:3vmin;background:radial-gradient(circle at 34% 30%,#93c5fd,#1d4ed8,#0f172a); }
+
+/* Hide planet labels on small screens */
+.plabel {
+  position: absolute;
+  top: calc(100% + 5px); left: 50%;
+  transform: translateX(-50%);
+  font-size: clamp(7px, 0.9vmin, 11px);
+  letter-spacing: 1.5px;
+  color: rgba(255,255,255,.35);
+  text-transform: uppercase;
+  white-space: nowrap;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
+}
+@media (max-width: 480px) {
+  .plabel { display: none; }
+}
 
 /* ── CURTAIN ── */
-#curtain{position:fixed;inset:0;z-index:50;pointer-events:none;}
-#curt-left{position:absolute;top:0;left:0;width:50%;height:100%;overflow:hidden;transition:transform 2.0s cubic-bezier(0.76,0,0.24,1);}
-#curt-right{position:absolute;top:0;right:0;width:50%;height:100%;overflow:hidden;transition:transform 2.0s cubic-bezier(0.76,0,0.24,1);}
-#cloud-L{position:absolute;top:0;left:0;}
-#cloud-R{position:absolute;top:0;left:-100%;}
-#curtain.open #curt-left{transform:translateX(-100%);}
-#curtain.open #curt-right{transform:translateX(100%);}
+#curtain { position: fixed; inset: 0; z-index: 50; pointer-events: none; }
+#curt-left  { position: absolute; top: 0; left: 0;   width: 50%; height: 100%; overflow: hidden; transition: transform 2.0s cubic-bezier(0.76,0,0.24,1); }
+#curt-right { position: absolute; top: 0; right: 0;  width: 50%; height: 100%; overflow: hidden; transition: transform 2.0s cubic-bezier(0.76,0,0.24,1); }
+#cloud-L { position: absolute; top: 0; left: 0; }
+#cloud-R { position: absolute; top: 0; left: -100%; }
+#curtain.open #curt-left  { transform: translateX(-100%); }
+#curtain.open #curt-right { transform: translateX(100%); }
 
 /* ── INVITATION WORD LINK ── */
-#inv-wrap{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0.6);opacity:0;z-index:40;text-align:center;transition:opacity 0.8s ease,transform 1s cubic-bezier(0.34,1.56,0.64,1);pointer-events:none;}
-#inv-wrap.arrive{opacity:1;transform:translate(-50%,-50%) scale(1);pointer-events:auto;}
-#inv-btn{display:block;background:transparent;border:none;font-family:'Cinzel',serif;font-size:clamp(2.4rem,5.5vw,4.5rem);font-weight:900;color:#fff;letter-spacing:16px;padding-left:16px;text-transform:uppercase;cursor:pointer;text-shadow:0 0 22px rgba(255,255,255,.5),0 0 55px rgba(56,189,248,.42);animation:invPulse 3.2s ease-in-out infinite;transition:transform .3s;}
-#inv-btn:hover{transform:scale(1.05);text-shadow:0 0 35px rgba(255,255,255,.95),0 0 75px rgba(56,189,248,.7);}
-@keyframes invPulse{0%,100%{text-shadow:0 0 22px rgba(255,255,255,.5),0 0 55px rgba(56,189,248,.42);}50%{text-shadow:0 0 32px rgba(255,255,255,.7),0 0 75px rgba(56,189,248,.6);}}
-.inv-line{margin:15px auto 0;width:0;height:1px;background:linear-gradient(90deg,transparent,rgba(56,189,248,.7),transparent);transition:width 1.2s ease .3s;}
-#inv-wrap.arrive .inv-line{width:280px;}
-.inv-hint{margin-top:12px;font-size:.78rem;letter-spacing:5px;color:rgba(255,255,255,.32);text-transform:uppercase;animation:hintBlink 2.4s ease-in-out infinite;}
-@keyframes hintBlink{0%,100%{opacity:.32;}50%{opacity:.72;}}
+#inv-wrap {
+  position: fixed; top: 50%; left: 50%;
+  transform: translate(-50%,-50%) scale(0.6);
+  opacity: 0; z-index: 40; text-align: center;
+  transition: opacity .8s ease, transform 1s cubic-bezier(0.34,1.56,0.64,1);
+  pointer-events: none;
+  width: 90vw;
+}
+#inv-wrap.arrive { opacity: 1; transform: translate(-50%,-50%) scale(1); pointer-events: auto; }
+#inv-btn {
+  display: block; background: transparent; border: none;
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.8rem, 8vw, 4.5rem);
+  font-weight: 900; color: #fff;
+  letter-spacing: clamp(6px, 2vw, 16px);
+  padding-left: clamp(6px, 2vw, 16px);
+  text-transform: uppercase; cursor: pointer;
+  text-shadow: 0 0 22px rgba(255,255,255,.5), 0 0 55px rgba(56,189,248,.42);
+  animation: invPulse 3.2s ease-in-out infinite;
+  transition: transform .3s;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+#inv-btn:active { transform: scale(0.96); }
+@media (hover: hover) {
+  #inv-btn:hover { transform: scale(1.05); text-shadow: 0 0 35px rgba(255,255,255,.95), 0 0 75px rgba(56,189,248,.7); }
+}
+@keyframes invPulse {
+  0%,100%{ text-shadow:0 0 22px rgba(255,255,255,.5),0 0 55px rgba(56,189,248,.42); }
+  50%    { text-shadow:0 0 32px rgba(255,255,255,.7),0 0 75px rgba(56,189,248,.6); }
+}
+.inv-line {
+  margin: 15px auto 0; width: 0; height: 1px;
+  background: linear-gradient(90deg,transparent,rgba(56,189,248,.7),transparent);
+  transition: width 1.2s ease .3s;
+}
+#inv-wrap.arrive .inv-line { width: min(280px, 70vw); }
+.inv-hint {
+  margin-top: 12px; font-size: .78rem; letter-spacing: 5px;
+  color: rgba(255,255,255,.32); text-transform: uppercase;
+  animation: hintBlink 2.4s ease-in-out infinite;
+}
+/* Adapt hint text for touch */
+@media (pointer: coarse) {
+  .inv-hint::before { content: '↑ tap to reveal ↑'; }
+  .inv-hint > * { display: none; }
+}
+@keyframes hintBlink { 0%,100%{ opacity:.32; } 50%{ opacity:.72; } }
 
-/* ── CARD layout (Updated Text Architecture styles) ── */
-#card{position:fixed;top:50%;left:50%;transform:translate(-50%,-45%) scale(0.9);width:min(90vw,520px);max-height:92vh;overflow-y:auto;background:rgba(5,10,22,.92);border:1.5px solid rgba(56,189,248,.45);box-shadow:0 0 50px rgba(56,189,248,.15);backdrop-filter:blur(25px);border-radius:20px;padding:clamp(20px,4vw,40px);text-align:center;z-index:45;opacity:0;pointer-events:none;transition:opacity .6s cubic-bezier(.25,1,.5,1),transform .6s cubic-bezier(.25,1,.5,1);}
-#card.active{opacity:1;transform:translate(-50%,-50%) scale(1);pointer-events:auto;}
-.badge{display:inline-block;background:linear-gradient(90deg,#0284c7,#7c3aed);color:#fff;font-size:.7rem;letter-spacing:2.5px;text-transform:uppercase;padding:5px 18px;border-radius:20px;margin-bottom:18px;}
-#card h2{font-family:'Cinzel',serif;font-size:clamp(1.5rem,3.5vw,2.1rem);background:linear-gradient(135deg,#fff 20%,#93c5fd);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px;}
-.salutation{color:#ffffff;font-size:1.15rem;font-weight:600;margin-bottom:10px;text-align:left;letter-spacing:1px;}
-#card>.desc{color:#cbd5e1;font-size:1.05rem;line-height:1.7;text-align:left;margin-bottom:5px;}
-.dbox{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.06);border-left:4px solid #38bdf8;border-radius:12px;padding:16px 20px;margin:20px 0;text-align:left;}
-.drow{display:flex;align-items:center;gap:10px;color:#cbd5e1;font-size:1rem;margin-bottom:10px;}
-.drow:last-child{margin-bottom:0;}
-.dlabel{color:#38bdf8;font-weight:600;margin-right:3px;}
-.cbtn{background:linear-gradient(135deg,#38bdf8,#7c3aed);color:#fff;border:none;padding:14px 40px;font-family:'Rajdhani',sans-serif;font-size:1rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;border-radius:50px;cursor:pointer;box-shadow:0 4px 20px rgba(124,58,237,.35);transition:transform .2s,box-shadow .2s;}
-.cbtn:hover{transform:translateY(-2px);box-shadow:0 6px 28px rgba(56,189,248,.55);}
+/* ── CARD ── */
+#card {
+  position: fixed; top: 50%; left: 50%;
+  transform: translate(-50%,-45%) scale(0.9);
+  width: min(92vw, 520px);
+  max-height: 88vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  background: rgba(5,10,22,.92);
+  border: 1.5px solid rgba(56,189,248,.45);
+  box-shadow: 0 0 50px rgba(56,189,248,.15);
+  backdrop-filter: blur(25px);
+  border-radius: 20px;
+  padding: clamp(16px, 5vw, 40px);
+  text-align: center;
+  z-index: 45; opacity: 0; pointer-events: none;
+  transition: opacity .6s cubic-bezier(.25,1,.5,1), transform .6s cubic-bezier(.25,1,.5,1);
+}
+#card.active { opacity: 1; transform: translate(-50%,-50%) scale(1); pointer-events: auto; }
+.badge {
+  display: inline-block;
+  background: linear-gradient(90deg,#0284c7,#7c3aed);
+  color: #fff; font-size: .7rem; letter-spacing: 2.5px;
+  text-transform: uppercase; padding: 5px 18px;
+  border-radius: 20px; margin-bottom: 18px;
+}
+#card h2 {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.2rem, 5vw, 2.1rem);
+  background: linear-gradient(135deg,#fff 20%,#93c5fd);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  margin-bottom: 12px;
+}
+.salutation { color: #ffffff; font-size: 1rem; font-weight: 600; margin-bottom: 10px; text-align: left; letter-spacing: 1px; }
+#card > .desc { color: #cbd5e1; font-size: .95rem; line-height: 1.7; text-align: left; margin-bottom: 5px; }
+.dbox {
+  background: rgba(255,255,255,.025);
+  border: 1px solid rgba(255,255,255,.06);
+  border-left: 4px solid #38bdf8;
+  border-radius: 12px; padding: 14px 16px; margin: 16px 0; text-align: left;
+}
+.drow { display: flex; align-items: center; gap: 10px; color: #cbd5e1; font-size: .95rem; margin-bottom: 10px; }
+.drow:last-child { margin-bottom: 0; }
+.dlabel { color: #38bdf8; font-weight: 600; margin-right: 3px; }
+.cbtn {
+  background: linear-gradient(135deg,#38bdf8,#7c3aed);
+  color: #fff; border: none;
+  padding: 14px 40px;
+  font-family: 'Rajdhani', sans-serif; font-size: 1rem; font-weight: 600;
+  letter-spacing: 2px; text-transform: uppercase;
+  border-radius: 50px; cursor: pointer;
+  box-shadow: 0 4px 20px rgba(124,58,237,.35);
+  transition: transform .2s, box-shadow .2s;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  /* Ensure minimum tap target on mobile */
+  min-height: 50px;
+  width: 100%;
+  max-width: 300px;
+}
+@media (hover: hover) {
+  .cbtn:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(56,189,248,.55); }
+}
+.cbtn:active { transform: scale(0.97); }
 
 /* ── OUTRO ── */
-#outro{position:fixed;top:50%;left:50%;transform:translate(-50%,-45%);text-align:center;z-index:50;opacity:0;pointer-events:none;transition:opacity .6s,transform .6s;}
-#outro.active{opacity:1;transform:translate(-50%,-50%);pointer-events:auto;}
-#rocket{font-size:4.5rem;display:block;margin-bottom:16px;}
-#rocket.go{animation:blastOff 1.5s forwards ease-in;}
-@keyframes blastOff{0%{transform:translateY(0) scale(1);opacity:1;}15%{transform:translateY(12px) scale(.93);}100%{transform:translateY(-130vh) scale(1.8);opacity:0;}}
-#outro h2{font-family:'Cinzel',serif;font-size:1.8rem;color:#fff;margin-bottom:8px;}
-#outro p{color:#94a3b8;font-size:.95rem;letter-spacing:2px;}
+#outro {
+  position: fixed; top: 50%; left: 50%;
+  transform: translate(-50%,-45%);
+  text-align: center; z-index: 50;
+  opacity: 0; pointer-events: none;
+  transition: opacity .6s, transform .6s;
+  width: 90vw;
+}
+#outro.active { opacity: 1; transform: translate(-50%,-50%); pointer-events: auto; }
+#rocket { font-size: clamp(3rem, 10vw, 4.5rem); display: block; margin-bottom: 16px; }
+#rocket.go { animation: blastOff 1.5s forwards ease-in; }
+@keyframes blastOff {
+  0%   { transform: translateY(0) scale(1); opacity: 1; }
+  15%  { transform: translateY(12px) scale(.93); }
+  100% { transform: translateY(-130vh) scale(1.8); opacity: 0; }
+}
+#outro h2 { font-family:'Cinzel',serif; font-size: clamp(1.3rem, 5vw, 1.8rem); color:#fff; margin-bottom:8px; }
+#outro p  { color:#94a3b8; font-size: clamp(.8rem, 3vw, .95rem); letter-spacing:2px; }
+
+/* ── SAFE AREA (notch) ── */
+#card { padding-bottom: max(clamp(16px,5vw,40px), env(safe-area-inset-bottom)); }
 </style>
 </head>
 <body>
@@ -152,22 +332,22 @@ body.click #cur-ring {
 <div id="solar">
   <div style="position:relative;width:0;height:0;">
     <div id="sun"></div>
-    <div class="oring" style="width:15vmin;height:15vmin;"></div>
-    <div class="oring" style="width:23vmin;height:23vmin;"></div>
-    <div class="oring" style="width:31vmin;height:31vmin;"></div>
-    <div class="oring" style="width:40vmin;height:40vmin;"></div>
-    <div class="oring" style="width:53vmin;height:53vmin;"></div>
-    <div class="oring" style="width:66vmin;height:66vmin;"></div>
-    <div class="oring" style="width:79vmin;height:79vmin;"></div>
-    <div class="oring" style="width:92vmin;height:92vmin;"></div>
-    
+    <div class="oring oring-1"  style="width:15vmin;height:15vmin;"></div>
+    <div class="oring oring-2"  style="width:23vmin;height:23vmin;"></div>
+    <div class="oring oring-3"  style="width:31vmin;height:31vmin;"></div>
+    <div class="oring oring-4"  style="width:40vmin;height:40vmin;"></div>
+    <div class="oring oring-5"  style="width:53vmin;height:53vmin;"></div>
+    <div class="oring oring-6"  style="width:66vmin;height:66vmin;"></div>
+    <div class="oring oring-7"  style="width:79vmin;height:79vmin;"></div>
+    <div class="oring oring-8"  style="width:92vmin;height:92vmin;"></div>
+
     <div class="parm parm-mercury"><div class="pbody pbody-mercury mercury-v" style="left:7.5vmin;"><div class="plabel">Mercury</div></div></div>
-    <div class="parm parm-venus"><div class="pbody pbody-venus venus-v" style="left:11.5vmin;"><div class="plabel">Venus</div></div></div>
-    <div class="parm parm-earth"><div class="pbody pbody-earth earth-v" style="left:15.5vmin;"><div class="plabel">Earth</div></div></div>
-    <div class="parm parm-mars"><div class="pbody pbody-mars mars-v" style="left:20vmin;"><div class="plabel">Mars</div></div></div>
+    <div class="parm parm-venus">  <div class="pbody pbody-venus   venus-v"   style="left:11.5vmin;"><div class="plabel">Venus</div></div></div>
+    <div class="parm parm-earth">  <div class="pbody pbody-earth   earth-v"   style="left:15.5vmin;"><div class="plabel">Earth</div></div></div>
+    <div class="parm parm-mars">   <div class="pbody pbody-mars    mars-v"    style="left:20vmin;"><div class="plabel">Mars</div></div></div>
     <div class="parm parm-jupiter"><div class="pbody pbody-jupiter jupiter-v" style="left:26.5vmin;"><div class="plabel">Jupiter</div></div></div>
-    <div class="parm parm-saturn"><div class="pbody pbody-saturn saturn-v" style="left:33vmin;overflow:visible;"><div class="plabel">Saturn</div></div></div>
-    <div class="parm parm-uranus"><div class="pbody pbody-uranus uranus-v" style="left:39.5vmin;"><div class="plabel">Uranus</div></div></div>
+    <div class="parm parm-saturn"> <div class="pbody pbody-saturn  saturn-v"  style="left:33vmin;overflow:visible;"><div class="plabel">Saturn</div></div></div>
+    <div class="parm parm-uranus"> <div class="pbody pbody-uranus  uranus-v"  style="left:39.5vmin;"><div class="plabel">Uranus</div></div></div>
     <div class="parm parm-neptune"><div class="pbody pbody-neptune neptune-v" style="left:46vmin;"><div class="plabel">Neptune</div></div></div>
   </div>
 </div>
@@ -193,7 +373,7 @@ body.click #cur-ring {
 <div id="outro">
   <span id="rocket">🚀</span>
   <h2>Seat Confirmed!</h2>
-  <p>Prepare for countdown. See you at the auditorium layout.</p>
+  <p>Prepare for countdown. See you at the auditorium.</p>
 </div>
 
 <div id="curtain">
@@ -201,98 +381,41 @@ body.click #cur-ring {
   <div id="curt-right"><canvas id="cloud-R"></canvas></div>
 </div>
 
+<!-- Custom cursor (desktop only) -->
 <div id="cur-system">
-  <div id="cur-ring">
-    <div id="cur-moon"></div>
-  </div>
+  <div id="cur-ring"><div id="cur-moon"></div></div>
   <div id="cur-dot"></div>
 </div>
 
 <script>
-/* ══════════════════════════════════════════
-   CLOUD DRAWING ENGINE
-══════════════════════════════════════════ */
+/* ══ CLOUD DRAWING ENGINE ══ */
 function drawCloud(ctx, cx, cy, cw, ch) {
   ctx.save();
   const hw = cw / 2;
-
   const cloudGrad = ctx.createLinearGradient(cx, cy - ch * 0.5, cx, cy + ch * 0.38);
-  cloudGrad.addColorStop(0, '#ffffff');       
-  cloudGrad.addColorStop(0.35, '#f0f7ff');    
-  cloudGrad.addColorStop(0.7, '#cbdff7');     
-  cloudGrad.addColorStop(1, '#94bceb');       
-
+  cloudGrad.addColorStop(0, '#ffffff');
+  cloudGrad.addColorStop(0.35, '#f0f7ff');
+  cloudGrad.addColorStop(0.7, '#cbdff7');
+  cloudGrad.addColorStop(1, '#94bceb');
   ctx.fillStyle = cloudGrad;
-
-  ctx.beginPath();
-  ctx.ellipse(cx, cy, hw, ch * 0.38, 0, 0, Math.PI * 2);
-  ctx.fill();
-
-  ctx.beginPath();
-  ctx.arc(cx - hw * 0.70, cy - ch * 0.04, ch * 0.34, 0, Math.PI * 2);
-  ctx.fill();
-
-  ctx.beginPath();
-  ctx.arc(cx - hw * 0.28, cy - ch * 0.35, ch * 0.50, 0, Math.PI * 2);
-  ctx.fill();
-
-  ctx.beginPath();
-  ctx.arc(cx + hw * 0.10, cy - ch * 0.28, ch * 0.44, 0, Math.PI * 2);
-  ctx.fill();
-
-  ctx.beginPath();
-  ctx.arc(cx + hw * 0.48, cy - ch * 0.14, ch * 0.36, 0, Math.PI * 2);
-  ctx.fill();
-
-  ctx.beginPath();
-  ctx.arc(cx + hw * 0.74, cy - ch * 0.02, ch * 0.27, 0, Math.PI * 2);
-  ctx.fill();
-
+  ctx.beginPath(); ctx.ellipse(cx, cy, hw, ch * 0.38, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(cx - hw * 0.70, cy - ch * 0.04, ch * 0.34, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(cx - hw * 0.28, cy - ch * 0.35, ch * 0.50, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(cx + hw * 0.10, cy - ch * 0.28, ch * 0.44, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(cx + hw * 0.48, cy - ch * 0.14, ch * 0.36, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(cx + hw * 0.74, cy - ch * 0.02, ch * 0.27, 0, Math.PI * 2); ctx.fill();
   ctx.restore();
 }
-
 const CLOUD_DEFS = [
-  [0.06,  -0.02, 0.18, 0.12], [0.28,  -0.04, 0.24, 0.15], [0.57,  -0.03, 0.26, 0.16], [0.82,  -0.02, 0.20, 0.13],
-  [0.03,   0.14, 0.13, 0.09], [0.20,   0.12, 0.20, 0.14], [0.47,   0.10, 0.25, 0.16], [0.73,   0.11, 0.22, 0.14], [0.96,   0.13, 0.13, 0.09],
-  [0.11,   0.28, 0.21, 0.14], [0.36,   0.27, 0.24, 0.15], [0.64,   0.27, 0.22, 0.14], [0.89,   0.28, 0.19, 0.12],
-  [0.02,   0.42, 0.16, 0.11], [0.24,   0.41, 0.20, 0.13], [0.51,   0.43, 0.18, 0.12], [0.76,   0.42, 0.21, 0.13], [0.98,   0.42, 0.12, 0.09],
-  [0.08,   0.57, 0.19, 0.12], [0.33,   0.56, 0.22, 0.14], [0.60,   0.57, 0.20, 0.13], [0.85,   0.56, 0.22, 0.14],
-  [0.01,   0.71, 0.15, 0.10], [0.18,   0.70, 0.20, 0.13], [0.44,   0.72, 0.23, 0.14], [0.69,   0.71, 0.21, 0.13], [0.93,   0.72, 0.16, 0.11],
-  [0.08,   0.87, 0.21, 0.14], [0.32,   0.88, 0.24, 0.15], [0.58,   0.87, 0.22, 0.14], [0.84,   0.88, 0.20, 0.13],
-  [0.50,   0.28, 0.14, 0.09], [0.15,   0.57, 0.15, 0.10], [0.40,   0.13, 0.14, 0.09],
+  [0.06,-0.02,0.18,0.12],[0.28,-0.04,0.24,0.15],[0.57,-0.03,0.26,0.16],[0.82,-0.02,0.20,0.13],
+  [0.03,0.14,0.13,0.09],[0.20,0.12,0.20,0.14],[0.47,0.10,0.25,0.16],[0.73,0.11,0.22,0.14],[0.96,0.13,0.13,0.09],
+  [0.11,0.28,0.21,0.14],[0.36,0.27,0.24,0.15],[0.64,0.27,0.22,0.14],[0.89,0.28,0.19,0.12],
+  [0.02,0.42,0.16,0.11],[0.24,0.41,0.20,0.13],[0.51,0.43,0.18,0.12],[0.76,0.42,0.21,0.13],[0.98,0.42,0.12,0.09],
+  [0.08,0.57,0.19,0.12],[0.33,0.56,0.22,0.14],[0.60,0.57,0.20,0.13],[0.85,0.56,0.22,0.14],
+  [0.01,0.71,0.15,0.10],[0.18,0.70,0.20,0.13],[0.44,0.72,0.23,0.14],[0.69,0.71,0.21,0.13],[0.93,0.72,0.16,0.11],
+  [0.08,0.87,0.21,0.14],[0.32,0.88,0.24,0.15],[0.58,0.87,0.22,0.14],[0.84,0.88,0.20,0.13],
+  [0.50,0.28,0.14,0.09],[0.15,0.57,0.15,0.10],[0.40,0.13,0.14,0.09],
 ];
-
-function renderClouds(canvas) {
-  const W = window.innerWidth;
-  const H = window.innerHeight;
-  canvas.width  = W;
-  canvas.height = H;
-  const ctx = canvas.getContext('2d');
-
-  ctx.fillStyle = '#03050d';
-  ctx.fillRect(0, 0, W, H);
-
-  const rng = mulberry32(12345);
-  for (let i = 0; i < 280; i++) {
-    const x = rng() * W;
-    const y = rng() * H;
-    const r = rng() * 1.2 + 0.2;
-    const a = rng() * 0.7 + 0.15;
-    ctx.beginPath();
-    ctx.arc(x, y, r, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(255,255,255,${a})`;
-    ctx.fill();
-  }
-
-  CLOUD_DEFS.forEach(([xf, yf, wf, hf]) => {
-    const cx = xf * W;
-    const cy = yf * H;
-    const cw = wf * W;
-    const ch = hf * H;
-    drawCloud(ctx, cx, cy, Math.max(cw, 120), Math.max(ch, 60));
-  });
-}
-
 function mulberry32(a) {
   return function() {
     a |= 0; a = a + 0x6D2B79F5 | 0;
@@ -301,12 +424,27 @@ function mulberry32(a) {
     return ((t ^ t >>> 14) >>> 0) / 4294967296;
   }
 }
+function renderClouds(canvas) {
+  const W = window.innerWidth, H = window.innerHeight;
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#03050d'; ctx.fillRect(0, 0, W, H);
+  const rng = mulberry32(12345);
+  for (let i = 0; i < 280; i++) {
+    const x = rng() * W, y = rng() * H, r = rng() * 1.2 + 0.2, a = rng() * 0.7 + 0.15;
+    ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(255,255,255,${a})`; ctx.fill();
+  }
+  CLOUD_DEFS.forEach(([xf, yf, wf, hf]) => {
+    drawCloud(ctx, xf * W, yf * H, Math.max(wf * W, 120), Math.max(hf * H, 60));
+  });
+}
 
-/* ── BACKGROUND STARFIELD ── */
+/* ── STARFIELD ── */
 (function(){
   const c = document.getElementById('starfield');
   const ctx = c.getContext('2d');
-  function resize(){ c.width=innerWidth; c.height=innerHeight; }
+  function resize(){ c.width = innerWidth; c.height = innerHeight; }
   resize();
   window.addEventListener('resize', resize);
   const rng = mulberry32(99999);
@@ -317,52 +455,45 @@ function mulberry32(a) {
   function draw(t) {
     ctx.clearRect(0,0,c.width,c.height);
     stars.forEach(s => {
-      const a = s.a*(0.45+0.55*Math.sin(t*s.speed+s.ph));
-      ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
-      ctx.fillStyle=`rgba(255,255,255,${a})`; ctx.fill();
+      const a = s.a * (0.45 + 0.55 * Math.sin(t * s.speed + s.ph));
+      ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(255,255,255,${a})`; ctx.fill();
     });
-    requestAnimationFrame(t2=>draw(t2/1000));
+    requestAnimationFrame(t2 => draw(t2 / 1000));
   }
-  requestAnimationFrame(t=>draw(t/1000));
+  requestAnimationFrame(t => draw(t / 1000));
 })();
 
-/* ── RESPONSIVE ZERO-G MOUSE ENGINE ── */
+/* ── CURSOR (desktop/fine pointer only) ── */
 const curSystem = document.getElementById('cur-system');
-let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
-let ringX = mouseX, ringY = mouseY;
-
-document.addEventListener('mousemove', e => {
-  mouseX = e.clientX; 
-  mouseY = e.clientY;
-});
-
-(function animCursorLoop() {
-  ringX += (mouseX - ringX) * 0.13; 
-  ringY += (mouseY - ringY) * 0.13;
-  
-  curSystem.style.transform = `translate3d(${ringX}px, ${ringY}px, 0)`;
-  requestAnimationFrame(animCursorLoop);
-})();
-
-document.addEventListener('mousedown', () => document.body.classList.add('click'));
-document.addEventListener('mouseup', () => document.body.classList.remove('click'));
+const isTouch = window.matchMedia('(pointer: coarse)').matches;
+if (!isTouch) {
+  let mouseX = innerWidth / 2, mouseY = innerHeight / 2;
+  let ringX = mouseX, ringY = mouseY;
+  document.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
+  (function animCursorLoop() {
+    ringX += (mouseX - ringX) * 0.13;
+    ringY += (mouseY - ringY) * 0.13;
+    curSystem.style.transform = `translate3d(${ringX}px,${ringY}px,0)`;
+    requestAnimationFrame(animCursorLoop);
+  })();
+  document.addEventListener('mousedown', () => document.body.classList.add('click'));
+  document.addEventListener('mouseup',   () => document.body.classList.remove('click'));
+}
 
 function attachHover(els) {
+  if (isTouch) return;
   els.forEach(el => {
     el.addEventListener('mouseenter', () => document.body.classList.add('hov'));
     el.addEventListener('mouseleave', () => document.body.classList.remove('hov'));
   });
 }
 
-/* ── INITIALIZATION SEQUENCING ── */
+/* ── INIT ── */
 window.addEventListener('DOMContentLoaded', () => {
-  const cL = document.getElementById('cloud-L');
-  const cR = document.getElementById('cloud-R');
-  renderClouds(cL);
-  renderClouds(cR);
-
+  renderClouds(document.getElementById('cloud-L'));
+  renderClouds(document.getElementById('cloud-R'));
   attachHover(document.querySelectorAll('button,.cbtn'));
-
   setTimeout(() => {
     document.getElementById('curtain').classList.add('open');
     setTimeout(() => {
@@ -372,14 +503,13 @@ window.addEventListener('DOMContentLoaded', () => {
   }, 1800);
 });
 
-/* ── OPEN CARD ACTION TRIGGER ── */
+/* ── ACTIONS ── */
 function openCard() {
   const wrapper = document.getElementById('inv-wrap');
   wrapper.style.transition = 'opacity .4s ease, transform .4s ease';
   wrapper.style.opacity = '0';
-  wrapper.style.transform = 'translate(-50%, -50%) scale(0.8)';
+  wrapper.style.transform = 'translate(-50%,-50%) scale(0.8)';
   wrapper.style.pointerEvents = 'none';
-  
   setTimeout(() => {
     wrapper.style.display = 'none';
     const card = document.getElementById('card');
