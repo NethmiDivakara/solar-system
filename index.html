@@ -1,749 +1,910 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cosmic Talent Show - Chief Guest Invitation</title>
-    <style>
-        :root {
-            --night-sky: radial-gradient(circle at 50% 50%, #050b14 0%, #010306 100%);
-            --cloud-main: #f1f5f9;
-            --cloud-shadow: #cbd5e1;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Cosmic Talent Show - Chief Guest Invitation</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+/* ── CORE RESET & VARIABLES ── */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-        }
+:root {
+  --sky-dark: #03050d;
+  --blue-glow: #38bdf8;
+  --purple-glow: #7c3aed;
+  --gold-glow: #f59e0b;
+  --night-sky: radial-gradient(circle at 50% 50%, #050b14 0%, #010306 100%);
+  --cloud-main: #f1f5f9;
+  --cloud-shadow: #cbd5e1;
 
-        body, html {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background: var(--night-sky);
-            cursor: none;
-        }
+  /* Fluid scale tokens */
+  --planet-scale: 1;
+  --char-scale: 1;
+  --card-padding: clamp(18px, 4vw, 40px);
+  --card-font-h1: clamp(1.3rem, 4vw, 2.3rem);
+  --card-font-p: clamp(0.85rem, 2vw, 1.1rem);
+  --detail-font: clamp(0.78rem, 1.8vw, 1rem);
+  --btn-font: clamp(0.85rem, 2vw, 1.25rem);
+  --rocket-size: clamp(60px, 10vw, 120px);
+  --cloud-deck-h: clamp(160px, 22vh, 260px);
+}
 
-        .universe {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-        }
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--sky-dark);
+  font-family: 'Rajdhani', sans-serif;
+}
 
-        .stars {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: transparent;
-            background-image: 
-                radial-gradient(rgba(255,255,255,1) 0.75px, transparent 1.25px),
-                radial-gradient(rgba(255,255,255,0.9) 1px, transparent 1.75px),
-                radial-gradient(rgba(255,255,255,0.8) 0.5px, transparent 1px),
-                radial-gradient(rgba(254,240,138,0.9) 1px, transparent 1.5px), 
-                radial-gradient(rgba(186,230,253,0.7) 0.75px, transparent 1.25px); 
-            background-size: 180px 180px, 260px 260px, 320px 320px, 400px 400px, 480px 480px;
-            background-position: 0 0, 30px 80px, 110px 190px, 220px 40px, 150px 310px;
-            animation: twinkle 6s infinite ease-in-out;
-            opacity: 0.9;
-        }
+/* Only hide system cursor on non-touch devices */
+@media (hover: hover) and (pointer: fine) {
+  body { cursor: none; }
+}
 
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.7; }
-            50% { opacity: 1; }
-        }
+/* ── CUSTOM ORBIT CURSOR (desktop only) ── */
+#cur-system {
+  position: fixed;
+  top: 0; left: 0;
+  width: 0; height: 0;
+  pointer-events: none;
+  z-index: 99999;
+}
+#cur-dot {
+  position: absolute;
+  width: 6px; height: 6px;
+  background: #ffffff;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 10px #ffffff, 0 0 20px rgba(56,189,248,0.5);
+}
+#cur-ring {
+  position: absolute;
+  width: 38px; height: 38px;
+  border: 1px dashed rgba(56,189,248,0.4);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width .25s ease, height .25s ease, border-color .25s ease;
+  animation: cursorOrbitSpin 3s linear infinite;
+}
+#cur-moon {
+  position: absolute;
+  top: -3px; left: 50%;
+  width: 5px; height: 5px;
+  background: var(--blue-glow);
+  border-radius: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0 0 8px var(--blue-glow);
+  transition: background .25s ease, box-shadow .25s ease;
+}
+body.hov #cur-ring  { width: 56px; height: 56px; border-color: rgba(245,158,11,0.6); }
+body.hov #cur-moon  { background: var(--gold-glow); box-shadow: 0 0 8px var(--gold-glow); }
+body.click #cur-ring { width: 20px; height: 20px; border-color: #e879f9; }
 
-        .planet {
-            position: absolute;
-            border-radius: 50%;
-            animation: float 6s ease-in-out infinite;
-        }
+@keyframes cursorOrbitSpin {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to   { transform: translate(-50%, -50%) rotate(360deg); }
+}
 
-        @keyframes float {
-            0% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-10px) rotate(3deg); }
-            100% { transform: translateY(0px) rotate(0deg); }
-        }
+/* Hide custom cursor on touch devices */
+@media (hover: none) {
+  #cur-system { display: none; }
+}
 
-        /* ── DESKTOP PLANETS ── */
-        .earth {
-            width: 100px; height: 100px;
-            background: radial-gradient(circle at 30% 30%, #4b9fe1, #162f65);
-            box-shadow: inset -12px -12px 25px rgba(0,0,0,0.8), 0 0 25px rgba(75,159,225,0.4);
-            top: 12%; left: 4%;
-            animation-delay: 0s;
-        }
-        .earth::before {
-            content: '';
-            position: absolute;
-            width: 40px; height: 30px;
-            background: #52b760;
-            border-radius: 40% 50% 30% 40%;
-            top: 20px; left: 15px;
-            filter: blur(1px);
-            opacity: 0.9;
-        }
-        .mars {
-            width: 60px; height: 60px;
-            background: radial-gradient(circle at 30% 30%, #e76f51, #7c250b);
-            box-shadow: inset -8px -8px 18px rgba(0,0,0,0.8), 0 0 20px rgba(231,111,81,0.35);
-            top: 32%; left: 14%;
-            animation-delay: 1.5s;
-        }
-        .jupiter {
-            width: 130px; height: 130px;
-            background: linear-gradient(to bottom, #78350f, #a66c34, #d4a373, #a66c34, #78350f);
-            box-shadow: inset -15px -15px 30px rgba(0,0,0,0.8), 0 0 35px rgba(212,163,115,0.3);
-            top: 6%; right: 32%;
-            animation-delay: 2.5s;
-        }
-        .saturn-container {
-            position: absolute;
-            top: 35%; right: 8%;
-            animation: float 7s ease-in-out infinite;
-            animation-delay: 0.5s;
-            filter: drop-shadow(0 0 15px rgba(226,156,82,0.3));
-        }
-        .saturn {
-            width: 90px; height: 90px;
-            background: radial-gradient(circle at 30% 30%, #e29c52, #8f4713);
-            border-radius: 50%;
-            box-shadow: inset -12px -12px 20px rgba(0,0,0,0.7);
-        }
-        .saturn-rings {
-            position: absolute;
-            width: 160px; height: 30px;
-            border: 15px solid rgba(226,156,82,0.5);
-            border-radius: 50%;
-            top: 30px; left: -35px;
-            transform: rotate(-15deg);
-            box-shadow: 0 5px 5px rgba(0,0,0,0.4);
-        }
-        .uranus-container {
-            position: absolute;
-            top: 65%; left: 28%;
-            animation: float 8s ease-in-out infinite;
-            animation-delay: 4s;
-            filter: drop-shadow(0 0 15px rgba(6,182,212,0.3));
-        }
-        .uranus {
-            width: 70px; height: 70px;
-            background: radial-gradient(circle at 30% 30%, #a5f3fc, #0891b2);
-            border-radius: 50%;
-            box-shadow: inset -10px -10px 18px rgba(0,0,0,0.7);
-        }
-        .uranus-rings {
-            position: absolute;
-            width: 25px; height: 120px;
-            border: 4px solid rgba(165,243,252,0.4);
-            border-radius: 50%;
-            top: -25px; left: 22px;
-            transform: rotate(15deg);
-        }
-        .neptune {
-            width: 80px; height: 80px;
-            background: radial-gradient(circle at 30% 30%, #4ea8de, #005f96);
-            box-shadow: inset -10px -10px 20px rgba(0,0,0,0.8), 0 0 20px rgba(78,168,222,0.35);
-            top: 58%; left: 4%;
-            animation-delay: 2s;
-        }
-        .moon {
-            width: 50px; height: 50px;
-            background: radial-gradient(circle at 30% 30%, #e0e0e0, #545454);
-            box-shadow: inset -8px -8px 15px rgba(0,0,0,0.8), 0 0 15px rgba(255,255,255,0.15);
-            top: 62%; right: 12%;
-            animation-delay: 3s;
-        }
+/* ── CURTAIN INTRO ── */
+#curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+}
+#curt-left {
+  position: absolute; top: 0; left: 0;
+  width: 50%; height: 100%; overflow: hidden;
+  transition: transform 2.0s cubic-bezier(0.76, 0, 0.24, 1);
+}
+#curt-right {
+  position: absolute; top: 0; right: 0;
+  width: 50%; height: 100%; overflow: hidden;
+  transition: transform 2.0s cubic-bezier(0.76, 0, 0.24, 1);
+}
+#cloud-L { position: absolute; top: 0; left: 0; }
+#cloud-R { position: absolute; top: 0; left: -100%; }
+#curtain.open #curt-left  { transform: translateX(-100%); }
+#curtain.open #curt-right { transform: translateX(100%); }
 
-        /* ── CHARACTERS ── */
-        .char-float {
-            position: absolute;
-            animation: float-char 8s ease-in-out infinite;
-            z-index: 4;
-        }
-        .astronaut { top: 12%; right: 20%; width: 85px; animation-duration: 8s; filter: drop-shadow(0 0 12px rgba(255,255,255,0.3)); }
-        .alien-1   { top: 22%; left: 36%;  width: 75px; animation-duration: 7s;   animation-delay: 0.5s; filter: drop-shadow(0 0 12px rgba(167,243,208,0.45)); }
-        .alien-2   { top: 48%; right: 26%; width: 65px; animation-duration: 9s;   animation-delay: 1s;   filter: drop-shadow(0 0 12px rgba(216,180,254,0.45)); }
-        .alien-3   { top: 10%; left: 24%;  width: 70px; animation-duration: 7.5s; animation-delay: 1.5s; filter: drop-shadow(0 0 12px rgba(165,243,252,0.45)); }
-        .alien-4   { top: 48%; left: 20%;  width: 65px; animation-duration: 6.5s; animation-delay: 2s;   filter: drop-shadow(0 0 14px rgba(244,114,182,0.5)); }
-        .alien-5   { top: 25%; right: 42%; width: 65px; animation-duration: 8.5s; animation-delay: 0.8s; filter: drop-shadow(0 0 12px rgba(251,146,60,0.45)); }
+/* ── UNIVERSE STAGE ── */
+.universe {
+  position: relative;
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: var(--night-sky);
+  z-index: 10;
+}
 
-        @keyframes float-char {
-            0%   { transform: translate(0,0) rotate(0deg); }
-            50%  { transform: translate(-10px,-15px) rotate(-8deg); }
-            100% { transform: translate(0,0) rotate(0deg); }
-        }
+/* Star field */
+.stars {
+  position: absolute;
+  width: 100%; height: 100%;
+  background-image:
+    radial-gradient(rgba(255,255,255,1) 0.75px, transparent 1.25px),
+    radial-gradient(rgba(255,255,255,0.9) 1px, transparent 1.75px),
+    radial-gradient(rgba(255,255,255,0.8) 0.5px, transparent 1px),
+    radial-gradient(rgba(254,240,138,0.9) 1px, transparent 1.5px),
+    radial-gradient(rgba(186,230,253,0.7) 0.75px, transparent 1.25px);
+  background-size: 180px 180px, 260px 260px, 320px 320px, 400px 400px, 480px 480px;
+  background-position: 0 0, 30px 80px, 110px 190px, 220px 40px, 150px 310px;
+  animation: twinkle 6s infinite ease-in-out;
+  opacity: 0.9;
+}
+@keyframes twinkle {
+  0%,100% { opacity: 0.7; }
+  50%      { opacity: 1; }
+}
 
-        /* ── ROCKET ── */
-        .rocket-stage {
-            position: absolute;
-            bottom: 150px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10;
-            transition: all 2.5s cubic-bezier(0.6,-0.28,0.735,0.045);
-            filter: drop-shadow(0 0 15px rgba(255,255,255,0.15));
-        }
-        .rocket { width: 120px; cursor: pointer; }
-        .flame {
-            position: absolute;
-            bottom: -30px; left: 50%;
-            transform: translateX(-50%) scale(0);
-            transform-origin: top center;
-            width: 30px; height: 50px;
-            background: linear-gradient(to bottom, #ff9e00, #ff0055, transparent);
-            border-radius: 50%;
-            transition: transform 0.3s ease;
-        }
+/* ── PLANETS ── */
+.planet {
+  position: absolute;
+  border-radius: 50%;
+  animation: floatPlanet 6s ease-in-out infinite;
+}
+@keyframes floatPlanet {
+  0%   { transform: translateY(0px) rotate(0deg); }
+  50%  { transform: translateY(-10px) rotate(3deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
+}
 
-        /* ── CLOUD DECK ── */
-        .cloud-deck {
-            position: absolute;
-            bottom: 0; left: 0;
-            width: 100%; height: 260px;
-            z-index: 5;
-            transition: transform 2s cubic-bezier(0.25,1,0.5,1);
-        }
-        .cloud-puff {
-            position: absolute;
-            background: linear-gradient(to bottom, var(--cloud-main), var(--cloud-shadow));
-            border-radius: 50%;
-            box-shadow: 0 -15px 30px rgba(203,213,225,0.35), inset 0 10px 15px #ffffff;
-        }
-        .puff-main-center { width: 50%; height: 180px; bottom: -40px; left: 25%; border-radius: 100px 100px 0 0; }
-        .puff-left-1  { width: 300px; height: 220px; bottom: -50px; left: -50px; }
-        .puff-left-2  { width: 240px; height: 180px; bottom: -30px; left: 15%; }
-        .puff-right-1 { width: 320px; height: 240px; bottom: -60px; right: -60px; }
-        .puff-right-2 { width: 260px; height: 190px; bottom: -30px; right: 12%; }
-        .cloud-base-fill {
-            position: absolute; bottom: 0; left: 0;
-            width: 100%; height: 90px;
-            background: var(--cloud-shadow);
-            box-shadow: inset 0 15px 20px rgba(255,255,255,0.6);
-        }
-        .cloud-interactive-zone {
-            position: absolute; bottom: 45px; left: 0;
-            width: 100%;
-            display: flex; justify-content: center;
-            z-index: 6;
-        }
-        .launch-btn {
-            padding: 16px 45px;
-            font-size: 1.25rem; font-weight: bold;
-            color: #0d1b2a;
-            background: linear-gradient(45deg, #ff9e00, #ffea00);
-            border: none; border-radius: 50px;
-            cursor: pointer;
-            box-shadow: 0 6px 25px rgba(255,158,0,0.4);
-            transition: all 0.3s ease;
-            letter-spacing: 0.5px;
-        }
-        .launch-btn:hover { transform: scale(1.05); box-shadow: 0 10px 30px rgba(255,158,0,0.6); }
+/* Base sizes use clamp for fluid scaling */
+.earth {
+  width: clamp(45px, 8vw, 100px);
+  height: clamp(45px, 8vw, 100px);
+  background: radial-gradient(circle at 30% 30%, #4b9fe1, #162f65);
+  box-shadow: inset -12px -12px 25px rgba(0,0,0,0.8), 0 0 25px rgba(75,159,225,0.4);
+  top: 8%; left: 2%;
+  animation-delay: 0s;
+}
+.earth::before {
+  content: '';
+  position: absolute;
+  width: 40%; height: 30%;
+  background: #52b760;
+  border-radius: 40% 50% 30% 40%;
+  top: 20%; left: 15%;
+  filter: blur(1px);
+  opacity: 0.9;
+}
 
-        /* ── INVITATION CARD ── */
-        .invitation-card {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -30%) scale(0.8);
-            width: 90%; max-width: 500px;
-            background: rgba(13,27,42,0.45);
-            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255,255,255,0.15);
-            padding: 40px; border-radius: 24px;
-            color: white; text-align: center;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.8), 0 0 30px rgba(255,234,0,0.08);
-            opacity: 0; visibility: hidden; z-index: 2;
-            transition: all 2s cubic-bezier(0.34,1.56,0.64,1);
-            transition-delay: 1s;
-        }
-        .invitation-card h1 {
-            font-size: 2.3rem; margin-bottom: 15px;
-            background: linear-gradient(45deg, #ffea00, #ff9e00);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            text-transform: uppercase; letter-spacing: 2px;
-        }
-        .invitation-card p { font-size: 1.1rem; line-height: 1.6; margin-bottom: 25px; color: #e0e5ff; }
-        .event-details {
-            background: rgba(255,255,255,0.06); padding: 20px; border-radius: 16px;
-            margin-bottom: 25px; text-align: left;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-        .detail-item { margin-bottom: 12px; font-size: 1rem; display: flex; align-items: center; }
-        .detail-item:last-child { margin-bottom: 0; }
-        .detail-item strong { color: #ffea00; width: 100px; display: inline-block; }
-        .rsvp-btn {
-            padding: 12px 30px; background: transparent;
-            border: 2px solid white; color: white;
-            border-radius: 30px; font-size: 1rem;
-            cursor: pointer; font-weight: 600;
-            transition: all 0.3s ease; position: relative; z-index: 10;
-        }
-        .rsvp-btn:hover { background: white; color: #0d1b2a; }
+.mars {
+  width: clamp(28px, 5vw, 60px);
+  height: clamp(28px, 5vw, 60px);
+  background: radial-gradient(circle at 30% 30%, #e76f51, #7c250b);
+  box-shadow: inset -8px -8px 18px rgba(0,0,0,0.8), 0 0 20px rgba(231,111,81,0.35);
+  top: 28%; left: 10%;
+  animation-delay: 1.5s;
+}
 
-        /* ── POPUP ── */
-        .custom-popup-overlay {
-            position: fixed; top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(1,3,6,0.7);
-            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-            display: flex; justify-content: center; align-items: center;
-            z-index: 10000; opacity: 0; visibility: hidden;
-            transition: all 0.4s ease-in-out;
-        }
-        .custom-popup-overlay.show { opacity: 1; visibility: visible; }
-        .custom-popup-box {
-            background: rgba(20,35,55,0.9);
-            border: 2px solid rgba(255,234,0,0.3);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.6), 0 0 25px rgba(255,234,0,0.15);
-            padding: 35px 50px; border-radius: 20px;
-            text-align: center; max-width: 450px; width: 90%;
-            transform: scale(0.8);
-            transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
-        }
-        .custom-popup-overlay.show .custom-popup-box { transform: scale(1); }
-        .custom-popup-box h2 {
-            font-size: 2rem;
-            background: linear-gradient(45deg, #ffea00, #ff9e00);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px;
-        }
-        .custom-popup-box p { color: #f1f5f9; font-size: 1.1rem; line-height: 1.5; }
+.jupiter {
+  width: clamp(55px, 10vw, 130px);
+  height: clamp(55px, 10vw, 130px);
+  background: linear-gradient(to bottom, #78350f, #a66c34, #d4a373, #a66c34, #78350f);
+  box-shadow: inset -15px -15px 30px rgba(0,0,0,0.8), 0 0 35px rgba(212,163,115,0.3);
+  top: 3%; right: 28%;
+  animation-delay: 2.5s;
+}
 
-        /* ── CURSOR ── */
-        #solar-cursor {
-            position: fixed; width: 30px; height: 30px;
-            pointer-events: none; z-index: 9999;
-            transform: translate(-50%, -50%);
-        }
-        .sun-dot {
-            position: absolute; top: 50%; left: 50%;
-            width: 8px; height: 8px;
-            background: #ffea00; border-radius: 50%;
-            transform: translate(-50%,-50%);
-            box-shadow: 0 0 10px #ffea00, 0 0 20px #ff9e00;
-        }
-        .planet-orbit {
-            position: absolute; top: 0; left: 0;
-            width: 100%; height: 100%;
-            animation: cursorOrbit 2s linear infinite;
-        }
-        .orbit-dot {
-            position: absolute; top: 0; left: 50%;
-            width: 4px; height: 4px;
-            background: #cbd5e1; border-radius: 50%;
-            transform: translate(-50%,-50%);
-        }
-        @keyframes cursorOrbit {
-            from { transform: rotate(0deg); }
-            to   { transform: rotate(360deg); }
-        }
+.saturn-container {
+  position: absolute;
+  top: 32%; right: 3%;
+  animation: floatPlanet 7s ease-in-out infinite;
+  animation-delay: 0.5s;
+  filter: drop-shadow(0 0 15px rgba(226,156,82,0.3));
+}
+.saturn {
+  width: clamp(40px, 7vw, 90px);
+  height: clamp(40px, 7vw, 90px);
+  background: radial-gradient(circle at 30% 30%, #e29c52, #8f4713);
+  border-radius: 50%;
+  box-shadow: inset -12px -12px 20px rgba(0,0,0,0.7);
+}
+.saturn-rings {
+  position: absolute;
+  width: clamp(70px, 12.5vw, 160px);
+  height: clamp(12px, 2.5vw, 30px);
+  border: clamp(5px, 1.2vw, 15px) solid rgba(226,156,82,0.5);
+  border-radius: 50%;
+  top: 30%; left: 50%;
+  transform: translateX(-50%) rotate(-15deg);
+  box-shadow: 0 5px 5px rgba(0,0,0,0.4);
+}
 
-        /* ── LAUNCHED STATE ── */
-        .launched .rocket-stage {
-            transform: translate(-50%, -120vh);
-            filter: drop-shadow(0 0 30px #ff9e00);
-        }
-        .launched .flame {
-            transform: translateX(-50%) scale(1.8);
-            animation: flameFlicker 0.1s infinite alternate;
-        }
-        .launched .cloud-deck { transform: translateY(280px); }
-        .launched .invitation-card {
-            opacity: 1; visibility: visible;
-            transform: translate(-50%,-50%) scale(1);
-        }
-        @keyframes flameFlicker {
-            0%   { transform: translateX(-50%) scaleX(1.5) scaleY(1.7); }
-            100% { transform: translateX(-50%) scaleX(1.3) scaleY(2); filter: blur(1px); }
-        }
+.uranus-container {
+  position: absolute;
+  top: 62%; left: 24%;
+  animation: floatPlanet 8s ease-in-out infinite;
+  animation-delay: 4s;
+  filter: drop-shadow(0 0 15px rgba(6,182,212,0.3));
+}
+.uranus {
+  width: clamp(32px, 5.5vw, 70px);
+  height: clamp(32px, 5.5vw, 70px);
+  background: radial-gradient(circle at 30% 30%, #a5f3fc, #0891b2);
+  border-radius: 50%;
+  box-shadow: inset -10px -10px 18px rgba(0,0,0,0.7);
+}
+.uranus-rings {
+  position: absolute;
+  width: clamp(10px, 2vw, 25px);
+  height: clamp(55px, 9vw, 120px);
+  border: clamp(2px, 0.4vw, 4px) solid rgba(165,243,252,0.4);
+  border-radius: 50%;
+  top: -35%; left: 30%;
+  transform: rotate(15deg);
+}
 
+.neptune {
+  width: clamp(36px, 6vw, 80px);
+  height: clamp(36px, 6vw, 80px);
+  background: radial-gradient(circle at 30% 30%, #4ea8de, #005f96);
+  box-shadow: inset -10px -10px 20px rgba(0,0,0,0.8), 0 0 20px rgba(78,168,222,0.35);
+  top: 55%; left: 2%;
+  animation-delay: 2s;
+}
 
-        /* ═══════════════════════════════════════════════
-           MOBILE RESPONSIVE  ≤ 768px
-           Layout grid (all positions are absolute, px-free
-           so they scale with viewport height/width %):
+.moon {
+  width: clamp(22px, 4vw, 50px);
+  height: clamp(22px, 4vw, 50px);
+  background: radial-gradient(circle at 30% 30%, #e0e0e0, #545454);
+  box-shadow: inset -8px -8px 15px rgba(0,0,0,0.8), 0 0 15px rgba(255,255,255,0.15);
+  top: 60%; right: 8%;
+  animation-delay: 3s;
+}
 
-           LEFT COLUMN  (x: 2%–18%)   — planets only
-           RIGHT COLUMN (x: 72%–92%)  — planets only
-           CENTER STRIP (x: 22%–70%)  — aliens + rocket
+/* ── FLOATING CHARACTERS ── */
+.char-float {
+  position: absolute;
+  animation: floatChar 8s ease-in-out infinite;
+  z-index: 4;
+}
+@keyframes floatChar {
+  0%   { transform: translate(0, 0) rotate(0deg); }
+  50%  { transform: translate(-10px, -15px) rotate(-8deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
+}
 
-           Vertical slots (% of 100vh, cloud deck ~180px at bottom):
-             Slot 1:  3%   → Jupiter (right, 80px)
-             Slot 2:  3%   → Earth (left, 72px)
-             Slot 3:  18%  → Alien-3 (center-left, 50px)
-             Slot 4:  18%  → Astronaut (center-right, 55px)
-             Slot 5:  28%  → Mars (left, 44px)
-             Slot 6:  28%  → Saturn (right, shrunk)
-             Slot 7:  38%  → Alien-1 (center, 50px)
-             Slot 8:  48%  → Alien-5 (center, 48px)
-             Slot 9:  48%  → Neptune (left, 54px)
-             Slot 10: 48%  → Moon (right, 38px)
-             Slot 11: 58%  → Alien-2 (center, 48px)
-             Slot 12: 58%  → Uranus (left, 52px)
-             Slot 13: 68%  → Alien-4 (center, 48px)
-             Slot 14: 75%  → Rocket (center)
-        ═══════════════════════════════════════════════ */
+/* fluid sizes for characters */
+.astronaut { top: 8%; right: 18%; width: clamp(38px, 7vw, 85px); animation-duration: 8s; filter: drop-shadow(0 0 12px rgba(255,255,255,0.3)); }
+.alien-1   { top: 18%; left: 32%; width: clamp(33px, 6vw, 75px); animation-duration: 7s; animation-delay: 0.5s; filter: drop-shadow(0 0 12px rgba(167,243,208,0.45)); }
+.alien-2   { top: 44%; right: 22%; width: clamp(28px, 5vw, 65px); animation-duration: 9s; animation-delay: 1s; filter: drop-shadow(0 0 12px rgba(216,180,254,0.45)); }
+.alien-3   { top: 6%; left: 20%; width: clamp(30px, 5.5vw, 70px); animation-duration: 7.5s; animation-delay: 1.5s; filter: drop-shadow(0 0 12px rgba(165,243,252,0.45)); }
+.alien-4   { top: 44%; left: 15%; width: clamp(28px, 5vw, 65px); animation-duration: 6.5s; animation-delay: 2s; filter: drop-shadow(0 0 14px rgba(244,114,182,0.5)); }
+.alien-5   { top: 20%; right: 38%; width: clamp(28px, 5vw, 65px); animation-duration: 8.5s; animation-delay: 0.8s; filter: drop-shadow(0 0 12px rgba(251,146,60,0.45)); }
 
-        @media (max-width: 768px) {
+/* Hide some characters on very small screens to reduce clutter */
+@media (max-width: 480px) {
+  .alien-3, .alien-5, .alien-4 { display: none; }
+  .astronaut { top: 5%; right: 12%; }
+  .alien-1   { top: 16%; left: 8%; }
+  .alien-2   { top: 38%; right: 8%; }
+}
 
-            body, html {
-                overflow-y: auto;
-                height: auto;
-                min-height: 100%;
-            }
+/* ── ROCKET ── */
+.rocket-stage {
+  position: absolute;
+  bottom: calc(var(--cloud-deck-h) + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  transition: all 2.5s cubic-bezier(0.6, -0.28, 0.735, 0.045);
+  filter: drop-shadow(0 0 15px rgba(255,255,255,0.15));
+}
+.rocket {
+  width: var(--rocket-size);
+  display: block;
+}
+.flame {
+  position: absolute;
+  bottom: -20px; left: 50%;
+  transform: translateX(-50%) scale(0);
+  transform-origin: top center;
+  width: clamp(14px, 2.5vw, 30px);
+  height: clamp(25px, 4.5vw, 50px);
+  background: linear-gradient(to bottom, #ff9e00, #ff0055, transparent);
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+}
 
-            .universe {
-                height: 100vh;
-                min-height: 600px;
-                overflow: hidden;
-            }
+/* ── CLOUD DECK ── */
+.cloud-deck {
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 100%;
+  height: var(--cloud-deck-h);
+  z-index: 5;
+  transition: transform 2s cubic-bezier(0.25, 1, 0.5, 1);
+}
+.cloud-puff {
+  position: absolute;
+  background: linear-gradient(to bottom, var(--cloud-main), var(--cloud-shadow));
+  border-radius: 50%;
+  box-shadow: 0 -15px 30px rgba(203,213,225,0.35), inset 0 10px 15px #ffffff;
+}
+.puff-main-center { width: 50%; height: 70%; bottom: -20px; left: 25%; border-radius: 100px 100px 0 0; }
+.puff-left-1  { width: clamp(120px, 22vw, 300px); height: 90%; bottom: -20px; left: -3%; }
+.puff-left-2  { width: clamp(100px, 18vw, 240px); height: 75%; bottom: -10px; left: 14%; }
+.puff-right-1 { width: clamp(130px, 24vw, 320px); height: 100%; bottom: -25px; right: -3%; }
+.puff-right-2 { width: clamp(100px, 19vw, 260px); height: 78%; bottom: -10px; right: 11%; }
+.cloud-base-fill {
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 100%; height: 38%;
+  background: var(--cloud-shadow);
+  box-shadow: inset 0 15px 20px rgba(255,255,255,0.6);
+}
+.cloud-interactive-zone {
+  position: absolute;
+  bottom: clamp(12px, 3vh, 45px);
+  left: 0; width: 100%;
+  display: flex;
+  justify-content: center;
+  z-index: 6;
+}
+.launch-btn {
+  padding: clamp(10px, 2.5vw, 16px) clamp(22px, 6vw, 45px);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: var(--btn-font);
+  font-weight: bold;
+  color: #0d1b2a;
+  background: linear-gradient(45deg, #ff9e00, #ffea00);
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 6px 25px rgba(255,158,0,0.4);
+  transition: all 0.3s ease;
+  letter-spacing: 0.5px;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.launch-btn:hover, .launch-btn:active {
+  transform: scale(1.05);
+  box-shadow: 0 10px 30px rgba(255,158,0,0.6);
+}
 
-            /* ── PLANETS: resized & repositioned ── */
+/* ── INVITATION CARD ── */
+.invitation-card {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -30%) scale(0.8);
+  width: clamp(280px, 88vw, 500px);
+  background: rgba(13, 27, 42, 0.5);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255,255,255,0.15);
+  padding: var(--card-padding);
+  border-radius: clamp(14px, 3vw, 24px);
+  color: white;
+  text-align: center;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.8), 0 0 30px rgba(255,234,0,0.08);
+  opacity: 0;
+  visibility: hidden;
+  z-index: 12;
+  transition: all 2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition-delay: 1s;
+  max-height: 90vh;
+  overflow-y: auto;
+  /* smooth scroll on iOS */
+  -webkit-overflow-scrolling: touch;
+}
+.invitation-card::-webkit-scrollbar { display: none; }
 
-            /* Earth — top-left */
-            .earth {
-                width: 72px; height: 72px;
-                top: 3%; left: 3%;
-            }
-            .earth::before {
-                width: 28px; height: 20px;
-                top: 14px; left: 10px;
-            }
+.invitation-card h1 {
+  font-family: 'Cinzel', serif;
+  font-size: var(--card-font-h1);
+  margin-bottom: 10px;
+  background: linear-gradient(45deg, #ffea00, #ff9e00);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-transform: uppercase;
+  letter-spacing: clamp(1px, 0.3vw, 2px);
+}
+.invitation-card > p {
+  font-size: var(--card-font-p);
+  line-height: 1.55;
+  margin-bottom: clamp(12px, 3vw, 25px);
+  color: #e0e5ff;
+}
+.event-details {
+  background: rgba(255,255,255,0.06);
+  padding: clamp(12px, 3vw, 20px);
+  border-radius: clamp(10px, 2vw, 16px);
+  margin-bottom: clamp(14px, 3vw, 25px);
+  text-align: left;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+.detail-item {
+  margin-bottom: 10px;
+  font-size: var(--detail-font);
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.detail-item:last-child { margin-bottom: 0; }
+.detail-item strong {
+  color: #ffea00;
+  min-width: clamp(70px, 18vw, 100px);
+  flex-shrink: 0;
+}
+.rsvp-btn {
+  padding: clamp(9px, 2vw, 12px) clamp(20px, 5vw, 30px);
+  background: transparent;
+  border: 2px solid white;
+  color: white;
+  border-radius: 30px;
+  font-size: clamp(0.85rem, 2vw, 1rem);
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 15;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.rsvp-btn:hover, .rsvp-btn:active {
+  background: white;
+  color: #0d1b2a;
+}
 
-            /* Jupiter — top-right */
-            .jupiter {
-                width: 80px; height: 80px;
-                top: 3%; right: 3%;
-                left: auto;
-            }
+/* ── SUCCESS MODAL ── */
+.custom-popup-overlay {
+  position: fixed; inset: 0;
+  background: rgba(1,3,6,0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  opacity: 0; visibility: hidden;
+  transition: all 0.4s ease-in-out;
+  padding: 20px;
+}
+.custom-popup-overlay.show { opacity: 1; visibility: visible; }
+.custom-popup-box {
+  background: rgba(20,35,55,0.9);
+  border: 2px solid rgba(255,234,0,0.3);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.6), 0 0 25px rgba(255,234,0,0.15);
+  padding: clamp(22px, 5vw, 35px) clamp(24px, 7vw, 50px);
+  border-radius: 20px;
+  text-align: center;
+  max-width: 450px;
+  width: 100%;
+  transform: scale(0.8);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.custom-popup-overlay.show .custom-popup-box { transform: scale(1); }
+.custom-popup-box h2 {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.3rem, 5vw, 2rem);
+  background: linear-gradient(45deg, #ffea00, #ff9e00);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+}
+.custom-popup-box p {
+  color: #f1f5f9;
+  font-size: clamp(0.9rem, 3vw, 1.1rem);
+  line-height: 1.5;
+}
 
-            /* Mars — left, below earth */
-            .mars {
-                width: 44px; height: 44px;
-                top: 26%; left: 3%;
-            }
+/* ── LAUNCHED STATE TRANSITIONS ── */
+.launched .rocket-stage {
+  transform: translate(-50%, -120vh);
+  filter: drop-shadow(0 0 30px #ff9e00);
+}
+.launched .flame {
+  transform: translateX(-50%) scale(1.8);
+  animation: flameFlicker 0.1s infinite alternate;
+}
+.launched .cloud-deck {
+  transform: translateY(var(--cloud-deck-h));
+}
+.launched .invitation-card {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, -50%) scale(1);
+}
+@keyframes flameFlicker {
+  0%   { transform: translateX(-50%) scaleX(1.5) scaleY(1.7); }
+  100% { transform: translateX(-50%) scaleX(1.3) scaleY(2); filter: blur(1px); }
+}
 
-            /* Saturn — right, mid */
-            .saturn-container {
-                top: 25%; right: 3%;
-                left: auto;
-            }
-            .saturn { width: 54px; height: 54px; }
-            .saturn-rings {
-                width: 96px; height: 18px;
-                border-width: 9px;
-                top: 18px; left: -21px;
-            }
+/* ── RESPONSIVE BREAKPOINTS ── */
 
-            /* Neptune — left lower */
-            .neptune {
-                width: 54px; height: 54px;
-                top: 47%; left: 3%;
-            }
+/* Large screens: push planets further out */
+@media (min-width: 1200px) {
+  .mars  { left: 12%; }
+  .earth { left: 3%; }
+}
 
-            /* Moon — right lower */
-            .moon {
-                width: 38px; height: 38px;
-                top: 47%; right: 3%;
-                left: auto;
-            }
+/* Tablet adjustments */
+@media (max-width: 768px) {
+  /* Simplify planet layout */
+  .jupiter { right: 22%; top: 2%; }
+  .uranus-container { left: 18%; }
+  .saturn-container { right: 1%; top: 30%; }
 
-            /* Uranus — left bottom */
-            .uranus-container {
-                top: 57%; left: 3%;
-                transform: none;
-            }
-            .uranus { width: 52px; height: 52px; }
-            .uranus-rings {
-                width: 18px; height: 90px;
-                top: -19px; left: 17px;
-            }
+  /* Card overlay positioning on mobile – center vertically properly */
+  .launched .invitation-card {
+    transform: translate(-50%, -52%) scale(1);
+  }
+}
 
-            /* ── CHARACTERS: center strip ── */
+/* Mobile portrait */
+@media (max-width: 480px) {
+  /* Planets: redistribute to corners */
+  .earth  { top: 5%; left: 1%; }
+  .mars   { top: 22%; left: 5%; }
+  .jupiter { top: 2%; right: 10%; }
+  .saturn-container { top: 28%; right: 0%; }
+  .neptune { top: 52%; left: 1%; }
+  .moon   { top: 56%; right: 4%; }
+  .uranus-container { top: 68%; left: 8%; display: none; } /* hide on tiny screens */
 
-            /* Alien-3 — upper center-left */
-            .alien-3 {
-                width: 50px;
-                top: 16%; left: 28%;
-            }
+  .invitation-card { width: 92vw; }
+  .launched .invitation-card { transform: translate(-50%, -54%) scale(1); }
+}
 
-            /* Astronaut — upper center-right */
-            .astronaut {
-                width: 55px;
-                top: 16%; right: 22%;
-                left: auto;
-            }
+/* Very small phones */
+@media (max-width: 360px) {
+  .invitation-card { width: 95vw; }
+  .jupiter { display: none; }
+}
 
-            /* Alien-1 — center */
-            .alien-1 {
-                width: 50px;
-                top: 36%; left: 38%;
-            }
+/* Landscape mobile - adjust card position */
+@media (max-height: 500px) and (orientation: landscape) {
+  :root { --cloud-deck-h: 120px; }
 
-            /* Alien-5 — center, below alien-1 */
-            .alien-5 {
-                width: 48px;
-                top: 46%; left: 42%;
-                right: auto;
-            }
+  .invitation-card {
+    width: min(90vw, 460px);
+    max-height: 85vh;
+    top: 50%;
+  }
+  .launched .invitation-card {
+    transform: translate(-50%, -50%) scale(1);
+  }
 
-            /* Alien-2 — center, below alien-5 */
-            .alien-2 {
-                width: 48px;
-                top: 57%; left: 36%;
-                right: auto;
-            }
+  /* Shrink characters in landscape */
+  .char-float { display: none; }
+  .astronaut  { display: block; }
+  .alien-1    { display: block; }
 
-            /* Alien-4 — center lower */
-            .alien-4 {
-                width: 48px;
-                top: 67%; left: 40%;
-                right: auto;
-            }
+  /* Squeeze planet band */
+  .mars    { top: 15%; }
+  .neptune { top: 45%; }
+}
 
-            /* ── ROCKET: smaller, higher up so it clears cloud ── */
-            .rocket-stage {
-                bottom: 175px;
-                left: 50%;
-                transform: translateX(-50%);
-            }
-            .rocket { width: 80px; }
-
-            /* ── CLOUD DECK: smaller on mobile ── */
-            .cloud-deck { height: 180px; }
-
-            .puff-left-1  { width: 180px; height: 150px; bottom: -40px; left: -30px; }
-            .puff-left-2  { width: 140px; height: 110px; bottom: -20px; left: 12%; }
-            .puff-right-1 { width: 190px; height: 160px; bottom: -50px; right: -30px; }
-            .puff-right-2 { width: 150px; height: 120px; bottom: -20px; right: 10%; }
-            .puff-main-center { height: 110px; bottom: -30px; }
-            .cloud-base-fill { height: 65px; }
-
-            .cloud-interactive-zone { bottom: 30px; }
-
-            .launch-btn {
-                padding: 11px 28px;
-                font-size: 1rem;
-            }
-
-            /* ── LAUNCHED cloud slides away ── */
-            .launched .cloud-deck { transform: translateY(200px); }
-
-            /* ── INVITATION CARD ── */
-            .invitation-card {
-                width: 88%;
-                padding: 24px 20px;
-                transform: translate(-50%, -28%) scale(0.85);
-            }
-            .launched .invitation-card {
-                transform: translate(-50%, -50%) scale(1);
-            }
-            .invitation-card h1 { font-size: 1.5rem; letter-spacing: 1px; }
-            .invitation-card p  { font-size: 0.9rem; margin-bottom: 18px; }
-            .event-details { padding: 14px; margin-bottom: 18px; }
-            .detail-item { font-size: 0.88rem; margin-bottom: 10px; }
-            .detail-item strong { width: 80px; }
-            .rsvp-btn { padding: 10px 24px; font-size: 0.92rem; }
-        }
-
-        /* Extra-small phones */
-        @media (max-width: 390px) {
-            .earth   { width: 60px; height: 60px; }
-            .jupiter { width: 66px; height: 66px; }
-            .mars    { width: 38px; height: 38px; }
-            .saturn  { width: 46px; height: 46px; }
-            .saturn-rings { width: 82px; height: 15px; border-width: 7px; top: 15px; left: -18px; }
-            .neptune { width: 46px; height: 46px; }
-            .moon    { width: 32px; height: 32px; }
-            .uranus  { width: 44px; height: 44px; }
-
-            .astronaut, .alien-1, .alien-2, .alien-3, .alien-4, .alien-5 { width: 42px; }
-
-            .rocket { width: 68px; }
-            .rocket-stage { bottom: 165px; }
-        }
-    </style>
+/* Very short landscape */
+@media (max-height: 380px) and (orientation: landscape) {
+  .invitation-card h1 { font-size: 1.1rem; margin-bottom: 6px; }
+  .invitation-card > p { margin-bottom: 8px; }
+  .event-details { padding: 10px; margin-bottom: 10px; }
+  .detail-item { margin-bottom: 6px; }
+}
+</style>
 </head>
 <body>
 
-    <div id="solar-cursor">
-        <div class="sun-dot"></div>
-        <div class="planet-orbit">
-            <div class="orbit-dot"></div>
-        </div>
+<!-- Custom orbit cursor (hidden on touch devices via CSS) -->
+<div id="cur-system">
+  <div id="cur-ring"><div id="cur-moon"></div></div>
+  <div id="cur-dot"></div>
+</div>
+
+<!-- Opening curtains -->
+<div id="curtain">
+  <div id="curt-left"><canvas id="cloud-L"></canvas></div>
+  <div id="curt-right"><canvas id="cloud-R"></canvas></div>
+</div>
+
+<!-- Success modal -->
+<div class="custom-popup-overlay" id="successPopup">
+  <div class="custom-popup-box">
+    <h2>Thank You</h2>
+    <p id="popupMessage">Thank you for accepting our invitation.<br>This page will close in 3 seconds.</p>
+  </div>
+</div>
+
+<!-- Main universe stage -->
+<div class="universe" id="universeContainer">
+  <div class="stars"></div>
+
+  <!-- Planets -->
+  <div class="planet earth"></div>
+  <div class="planet mars"></div>
+  <div class="planet jupiter"></div>
+
+  <div class="saturn-container">
+    <div class="saturn"></div>
+    <div class="saturn-rings"></div>
+  </div>
+
+  <div class="uranus-container">
+    <div class="uranus"></div>
+    <div class="uranus-rings"></div>
+  </div>
+
+  <div class="planet neptune"></div>
+  <div class="planet moon"></div>
+
+  <!-- Floating characters -->
+  <div class="char-float astronaut">
+    <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="32" cy="24" r="12" fill="#E6E6E6"/>
+      <rect x="23" y="17" width="18" height="12" rx="6" fill="#333333"/>
+      <rect x="25" y="19" width="14" height="8" rx="4" fill="#4B9FE1" opacity="0.7"/>
+      <rect x="20" y="36" width="24" height="16" rx="8" fill="#E6E6E6"/>
+      <rect x="14" y="38" width="7" height="12" rx="3.5" fill="#CCCCCC"/>
+      <rect x="43" y="38" width="7" height="12" rx="3.5" fill="#CCCCCC"/>
+      <path d="M20 42C10 42 5 30 0 35" stroke="white" stroke-width="1" stroke-dasharray="2,2"/>
+    </svg>
+  </div>
+
+  <div class="char-float alien-1">
+    <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M32 12C20 12 16 22 16 32C16 42 22 48 32 48C42 48 48 42 48 32C48 22 44 12 32 12Z" fill="#a7f3d0"/>
+      <path d="M24 14L18 6" stroke="#a7f3d0" stroke-width="3" stroke-linecap="round"/>
+      <path d="M40 14L46 6" stroke="#a7f3d0" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="18" cy="5" r="4" fill="#34d399"/>
+      <circle cx="46" cy="5" r="4" fill="#34d399"/>
+      <ellipse cx="25" cy="28" rx="5" ry="7" fill="#1e293b"/>
+      <ellipse cx="39" cy="28" rx="5" ry="7" fill="#1e293b"/>
+      <circle cx="24" cy="26" r="2" fill="#ffffff"/>
+      <circle cx="38" cy="26" r="2" fill="#ffffff"/>
+      <path d="M28 38C28 40 34 40 34 38" stroke="#1e293b" stroke-width="2" stroke-linecap="round"/>
+      <path d="M24 46L20 56H44L40 46H24Z" fill="#38bdf8"/>
+      <rect x="28" y="48" width="8" height="5" rx="1" fill="#f43f5e"/>
+    </svg>
+  </div>
+
+  <div class="char-float alien-2">
+    <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M32 10C20 10 14 20 14 32C14 44 20 52 32 52C44 52 50 44 50 32C50 20 44 10 32 10Z" fill="#d8b4fe"/>
+      <path d="M32 10V4" stroke="#d8b4fe" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="32" cy="4" r="4" fill="#a855f7"/>
+      <circle cx="32" cy="26" r="10" fill="#ffffff" stroke="#1e293b" stroke-width="2"/>
+      <circle cx="32" cy="26" r="5" fill="#1e293b"/>
+      <circle cx="30" cy="24" r="2" fill="#ffffff"/>
+      <path d="M24 40C24 44 32 46 40 40" stroke="#1e293b" stroke-width="2" stroke-linecap="round"/>
+      <path d="M20 48L16 58H48L44 48H20Z" fill="#a855f7"/>
+    </svg>
+  </div>
+
+  <div class="char-float alien-3">
+    <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M32 14C22 14 16 22 16 32C16 42 22 46 32 46C42 46 48 42 48 32C48 22 42 14 32 14Z" fill="#a5f3fc"/>
+      <ellipse cx="22" cy="26" rx="4" ry="6" fill="#ffffff" stroke="#1e293b"/>
+      <circle cx="22" cy="26" r="2" fill="#1e293b"/>
+      <ellipse cx="32" cy="24" rx="4" ry="6" fill="#ffffff" stroke="#1e293b"/>
+      <circle cx="32" cy="24" r="2" fill="#1e293b"/>
+      <ellipse cx="42" cy="26" rx="4" ry="6" fill="#ffffff" stroke="#1e293b"/>
+      <circle cx="42" cy="26" r="2" fill="#1e293b"/>
+      <path d="M26 36H38" stroke="#1e293b" stroke-width="2" stroke-linecap="round"/>
+      <path d="M26 46L24 56H40L38 46H26Z" fill="#22d3ee"/>
+    </svg>
+  </div>
+
+  <div class="char-float alien-4">
+    <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M32 16C22 16 14 22 14 34C14 44 22 48 32 48C42 48 50 44 50 34C50 22 42 16 32 16Z" fill="#f472b6"/>
+      <circle cx="22" cy="28" r="3" fill="#ffffff"/><circle cx="22" cy="28" r="1.5" fill="#000"/>
+      <circle cx="32" cy="24" r="4" fill="#ffffff"/><circle cx="32" cy="24" r="2" fill="#000"/>
+      <circle cx="42" cy="28" r="3" fill="#ffffff"/><circle cx="42" cy="28" r="1.5" fill="#000"/>
+      <path d="M26 38Q32 42 38 38" stroke="#1e293b" stroke-width="2" fill="none"/>
+      <path d="M22 48L18 56H46L42 48H22Z" fill="#ec4899"/>
+    </svg>
+  </div>
+
+  <div class="char-float alien-5">
+    <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M32 12C24 12 20 20 20 30C20 38 24 42 32 42C40 42 44 38 44 30C44 20 40 12 32 12Z" fill="#fb923c"/>
+      <path d="M26 14Q20 6 22 4" stroke="#fb923c" stroke-width="2" fill="none"/>
+      <path d="M38 14Q44 6 42 4" stroke="#fb923c" stroke-width="2" fill="none"/>
+      <circle cx="22" cy="4" r="2.5" fill="#f97316"/>
+      <circle cx="42" cy="4" r="2.5" fill="#f97316"/>
+      <ellipse cx="26" cy="26" rx="4" ry="5" fill="#1e293b"/>
+      <ellipse cx="38" cy="26" rx="4" ry="5" fill="#1e293b"/>
+      <path d="M28 34H36" stroke="#1e293b" stroke-width="2" stroke-linecap="round"/>
+      <path d="M24 42L20 54H44L40 42H24Z" fill="#f97316"/>
+    </svg>
+  </div>
+
+  <!-- Invitation card (revealed after launch) -->
+  <div class="invitation-card">
+    <h1>Cosmic Talent Show</h1>
+    <p>We request the honor of your presence as our distinguished Chief Guest at this year's premiere interstellar showcase.</p>
+    <div class="event-details">
+      <div class="detail-item"><strong>Showtime:</strong> Saturday, October 14th, 2026</div>
+      <div class="detail-item"><strong>Doors Open:</strong> 18:00 Hours (IST)</div>
+      <div class="detail-item"><strong>Auditorium:</strong> Auditorium Layout</div>
     </div>
+    <button class="rsvp-btn" id="acceptBtn">Accept Invitation</button>
+  </div>
 
-    <div class="custom-popup-overlay" id="successPopup">
-        <div class="custom-popup-box">
-            <h2>Thank You</h2>
-            <p id="popupMessage">Thank you for accepting our invitation.<br>This page will close in 3 seconds.</p>
-        </div>
+  <!-- Rocket -->
+  <div class="rocket-stage" id="rocketStage">
+    <div class="flame"></div>
+    <svg class="rocket" viewBox="0 0 60 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M30 5C30 5 45 25 45 55L40 75H20L15 55C15 25 30 5 30 5Z" fill="#E6E6E6"/>
+      <path d="M30 5C30 5 35 25 35 55L33 74H27L25 55C25 25 30 5 30 5Z" fill="#FFFFFF"/>
+      <path d="M15 60L5 78L15 75V60Z" fill="#E63946"/>
+      <path d="M45 60L55 78L45 75V60Z" fill="#E63946"/>
+      <path d="M25 75L30 85L35 75H25Z" fill="#A8DADC"/>
+      <circle cx="30" cy="35" r="7" fill="#1D3557"/>
+      <circle cx="30" cy="35" r="5" fill="#457B9D"/>
+    </svg>
+  </div>
+
+  <!-- Cloud deck with launch button -->
+  <div class="cloud-deck">
+    <div class="cloud-puff puff-left-1"></div>
+    <div class="cloud-puff puff-left-2"></div>
+    <div class="cloud-puff puff-right-1"></div>
+    <div class="cloud-puff puff-right-2"></div>
+    <div class="cloud-puff puff-main-center"></div>
+    <div class="cloud-base-fill"></div>
+    <div class="cloud-interactive-zone">
+      <button class="launch-btn" id="launchBtn">LAUNCH INVITATION</button>
     </div>
+  </div>
+</div>
 
-    <div class="universe" id="universeContainer">
-        <div class="stars"></div>
+<script>
+/* ══ CLOUD CANVAS RENDERER ══ */
+function drawCloud(ctx, cx, cy, cw, ch) {
+  ctx.save();
+  const hw = cw / 2;
+  const cloudGrad = ctx.createLinearGradient(cx, cy - ch * 0.5, cx, cy + ch * 0.38);
+  cloudGrad.addColorStop(0,    '#ffffff');
+  cloudGrad.addColorStop(0.35, '#f0f7ff');
+  cloudGrad.addColorStop(0.7,  '#cbdff7');
+  cloudGrad.addColorStop(1,    '#94bceb');
+  ctx.fillStyle = cloudGrad;
 
-        <div class="planet earth"></div>
-        <div class="planet mars"></div>
-        <div class="planet jupiter"></div>
-        <div class="saturn-container">
-            <div class="saturn"></div>
-            <div class="saturn-rings"></div>
-        </div>
-        <div class="uranus-container">
-            <div class="uranus"></div>
-            <div class="uranus-rings"></div>
-        </div>
-        <div class="planet neptune"></div>
-        <div class="planet moon"></div>
+  ctx.beginPath(); ctx.ellipse(cx, cy, hw, ch * 0.38, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(cx - hw * 0.70, cy - ch * 0.04, ch * 0.34, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(cx - hw * 0.28, cy - ch * 0.35, ch * 0.50, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(cx + hw * 0.10, cy - ch * 0.28, ch * 0.44, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(cx + hw * 0.48, cy - ch * 0.14, ch * 0.36, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(cx + hw * 0.74, cy - ch * 0.02, ch * 0.27, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
+}
 
-        <div class="char-float astronaut">
-            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="32" cy="24" r="12" fill="#E6E6E6"/>
-                <rect x="23" y="17" width="18" height="12" rx="6" fill="#333333"/>
-                <rect x="25" y="19" width="14" height="8" rx="4" fill="#4B9FE1" opacity="0.7"/>
-                <rect x="20" y="36" width="24" height="16" rx="8" fill="#E6E6E6"/>
-                <rect x="14" y="38" width="7" height="12" rx="3.5" fill="#CCCCCC"/>
-                <rect x="43" y="38" width="7" height="12" rx="3.5" fill="#CCCCCC"/>
-                <path d="M20 42C10 42 5 30 0 35" stroke="white" stroke-width="1" stroke-dasharray="2,2"/>
-            </svg>
-        </div>
+const CLOUD_DEFS = [
+  [0.06,-0.02,0.18,0.12],[0.28,-0.04,0.24,0.15],[0.57,-0.03,0.26,0.16],[0.82,-0.02,0.20,0.13],
+  [0.03,0.14,0.13,0.09],[0.20,0.12,0.20,0.14],[0.47,0.10,0.25,0.16],[0.73,0.11,0.22,0.14],[0.96,0.13,0.13,0.09],
+  [0.11,0.28,0.21,0.14],[0.36,0.27,0.24,0.15],[0.64,0.27,0.22,0.14],[0.89,0.28,0.19,0.12],
+  [0.02,0.42,0.16,0.11],[0.24,0.41,0.20,0.13],[0.51,0.43,0.18,0.12],[0.76,0.42,0.21,0.13],[0.98,0.42,0.12,0.09],
+  [0.08,0.57,0.19,0.12],[0.33,0.56,0.22,0.14],[0.60,0.57,0.20,0.13],[0.85,0.56,0.22,0.14],
+  [0.01,0.71,0.15,0.10],[0.18,0.70,0.20,0.13],[0.44,0.72,0.23,0.14],[0.69,0.71,0.21,0.13],[0.93,0.72,0.16,0.11],
+  [0.08,0.87,0.21,0.14],[0.32,0.88,0.24,0.15],[0.58,0.87,0.22,0.14],[0.84,0.88,0.20,0.13],
+  [0.50,0.28,0.14,0.09],[0.15,0.57,0.15,0.10],[0.40,0.13,0.14,0.09],
+];
 
-        <div class="char-float alien-1">
-            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M32 12C20 12 16 22 16 32C16 42 22 48 32 48C42 48 48 42 48 32C48 22 44 12 32 12Z" fill="#a7f3d0"/>
-                <path d="M24 14L18 6" stroke="#a7f3d0" stroke-width="3" stroke-linecap="round"/>
-                <path d="M40 14L46 6" stroke="#a7f3d0" stroke-width="3" stroke-linecap="round"/>
-                <circle cx="18" cy="5" r="4" fill="#34d399"/>
-                <circle cx="46" cy="5" r="4" fill="#34d399"/>
-                <ellipse cx="25" cy="28" rx="5" ry="7" fill="#1e293b"/>
-                <ellipse cx="39" cy="28" rx="5" ry="7" fill="#1e293b"/>
-                <circle cx="24" cy="26" r="2" fill="#ffffff"/>
-                <circle cx="38" cy="26" r="2" fill="#ffffff"/>
-                <path d="M28 38C28 40 34 40 34 38" stroke="#1e293b" stroke-width="2" stroke-linecap="round"/>
-                <path d="M24 46L20 56H44L40 46H24Z" fill="#38bdf8"/>
-                <rect x="28" y="48" width="8" height="5" rx="1" fill="#f43f5e"/>
-            </svg>
-        </div>
+function mulberry32(a) {
+  return function() {
+    a |= 0; a = a + 0x6D2B79F5 | 0;
+    let t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  }
+}
 
-        <div class="char-float alien-2">
-            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M32 10C20 10 14 20 14 32C14 44 20 52 32 52C44 52 50 44 50 32C50 20 44 10 32 10Z" fill="#d8b4fe"/>
-                <path d="M32 10V4" stroke="#d8b4fe" stroke-width="3" stroke-linecap="round"/>
-                <circle cx="32" cy="4" r="4" fill="#a855f7"/>
-                <circle cx="32" cy="26" r="10" fill="#ffffff" stroke="#1e293b" stroke-width="2"/>
-                <circle cx="32" cy="26" r="5" fill="#1e293b"/>
-                <circle cx="30" cy="24" r="2" fill="#ffffff"/>
-                <path d="M24 40C24 44 32 46 40 40" stroke="#1e293b" stroke-width="2" stroke-linecap="round"/>
-                <path d="M20 48L16 58H48L44 48H20Z" fill="#a855f7"/>
-            </svg>
-        </div>
+function renderClouds(canvas) {
+  const W = window.innerWidth;
+  const H = window.innerHeight;
+  canvas.width  = W;
+  canvas.height = H;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#03050d';
+  ctx.fillRect(0, 0, W, H);
+  const rng = mulberry32(12345);
+  for (let i = 0; i < 280; i++) {
+    const x = rng() * W, y = rng() * H, r = rng() * 1.2 + 0.2, a = rng() * 0.7 + 0.15;
+    ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(255,255,255,${a})`; ctx.fill();
+  }
+  CLOUD_DEFS.forEach(([xf, yf, wf, hf]) => {
+    drawCloud(ctx, xf * W, yf * H, Math.max(wf * W, 120), Math.max(hf * H, 60));
+  });
+}
 
-        <div class="char-float alien-3">
-            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M32 14C22 14 16 22 16 32C16 42 22 46 32 46C42 46 48 42 48 32C48 22 42 14 32 14Z" fill="#a5f3fc"/>
-                <ellipse cx="22" cy="26" rx="4" ry="6" fill="#ffffff" stroke="#1e293b"/>
-                <circle cx="22" cy="26" r="2" fill="#1e293b"/>
-                <ellipse cx="32" cy="24" rx="4" ry="6" fill="#ffffff" stroke="#1e293b"/>
-                <circle cx="32" cy="24" r="2" fill="#1e293b"/>
-                <ellipse cx="42" cy="26" rx="4" ry="6" fill="#ffffff" stroke="#1e293b"/>
-                <circle cx="42" cy="26" r="2" fill="#1e293b"/>
-                <path d="M26 36H38" stroke="#1e293b" stroke-width="2" stroke-linecap="round"/>
-                <path d="M26 46L24 56H40L38 46H26Z" fill="#22d3ee"/>
-            </svg>
-        </div>
+/* ══ CURSOR SYSTEM (pointer/mouse only) ══ */
+const isTouch = window.matchMedia('(hover: none)').matches;
+if (!isTouch) {
+  const curSystem = document.getElementById('cur-system');
+  let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+  let ringX = mouseX, ringY = mouseY;
 
-        <div class="char-float alien-4">
-            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M32 16C22 16 14 22 14 34C14 44 22 48 32 48C42 48 50 44 50 34C50 22 42 16 32 16Z" fill="#f472b6"/>
-                <circle cx="22" cy="28" r="3" fill="#ffffff"/><circle cx="22" cy="28" r="1.5" fill="#000"/>
-                <circle cx="32" cy="24" r="4" fill="#ffffff"/><circle cx="32" cy="24" r="2" fill="#000"/>
-                <circle cx="42" cy="28" r="3" fill="#ffffff"/><circle cx="42" cy="28" r="1.5" fill="#000"/>
-                <path d="M26 38Q32 42 38 38" stroke="#1e293b" stroke-width="2" fill="none"/>
-                <path d="M22 48L18 56H46L42 48H22Z" fill="#ec4899"/>
-            </svg>
-        </div>
+  window.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
 
-        <div class="char-float alien-5">
-            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M32 12C24 12 20 20 20 30C20 38 24 42 32 42C40 42 44 38 44 30C44 20 40 12 32 12Z" fill="#fb923c"/>
-                <path d="M26 14Q20 6 22 4" stroke="#fb923c" stroke-width="2" fill="none"/>
-                <path d="M38 14Q44 6 42 4" stroke="#fb923c" stroke-width="2" fill="none"/>
-                <circle cx="22" cy="4" r="2.5" fill="#f97316"/>
-                <circle cx="42" cy="4" r="2.5" fill="#f97316"/>
-                <ellipse cx="26" cy="26" rx="4" ry="5" fill="#1e293b"/>
-                <ellipse cx="38" cy="26" rx="4" ry="5" fill="#1e293b"/>
-                <path d="M28 34H36" stroke="#1e293b" stroke-width="2" stroke-linecap="round"/>
-                <path d="M24 42L20 54H44L40 42H24Z" fill="#f97316"/>
-            </svg>
-        </div>
+  (function animCursorLoop() {
+    ringX += (mouseX - ringX) * 0.13;
+    ringY += (mouseY - ringY) * 0.13;
+    curSystem.style.transform = `translate3d(${ringX}px, ${ringY}px, 0)`;
+    requestAnimationFrame(animCursorLoop);
+  })();
 
-        <div class="invitation-card">
-            <h1>Cosmic Talent Show</h1>
-            <p>We request the honor of your presence as our distinguished Chief Guest at this year's premiere interstellar showcase.</p>
-            <div class="event-details">
-                <div class="detail-item"><strong>Showtime:</strong> Saturday, October 14th, 2026</div>
-                <div class="detail-item"><strong>Doors Open:</strong> 18:00 Hours (IST)</div>
-                <div class="detail-item"><strong>Auditorium:</strong> Auditorium</div>
-            </div>
-            <button class="rsvp-btn" id="acceptBtn">Accept Invitation</button>
-        </div>
+  window.addEventListener('mousedown', () => document.body.classList.add('click'));
+  window.addEventListener('mouseup',   () => document.body.classList.remove('click'));
 
-        <div class="rocket-stage" id="rocketStage">
-            <div class="flame"></div>
-            <svg class="rocket" viewBox="0 0 60 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M30 5C30 5 45 25 45 55L40 75H20L15 55C15 25 30 5 30 5Z" fill="#E6E6E6"/>
-                <path d="M30 5C30 5 35 25 35 55L33 74H27L25 55C25 25 30 5 30 5Z" fill="#FFFFFF"/>
-                <path d="M15 60L5 78L15 75V60Z" fill="#E63946"/>
-                <path d="M45 60L55 78L45 75V60Z" fill="#E63946"/>
-                <path d="M25 75L30 85L35 75H25Z" fill="#A8DADC"/>
-                <circle cx="30" cy="35" r="7" fill="#1D3557"/>
-                <circle cx="30" cy="35" r="5" fill="#457B9D"/>
-            </svg>
-        </div>
+  document.querySelectorAll('button').forEach(el => {
+    el.addEventListener('mouseenter', () => document.body.classList.add('hov'));
+    el.addEventListener('mouseleave', () => document.body.classList.remove('hov'));
+  });
+}
 
-        <div class="cloud-deck">
-            <div class="cloud-puff puff-left-1"></div>
-            <div class="cloud-puff puff-left-2"></div>
-            <div class="cloud-puff puff-right-1"></div>
-            <div class="cloud-puff puff-right-2"></div>
-            <div class="cloud-puff puff-main-center"></div>
-            <div class="cloud-base-fill"></div>
-            <div class="cloud-interactive-zone">
-                <button class="launch-btn" id="launchBtn">LAUNCH INVITATION</button>
-            </div>
-        </div>
-    </div>
+/* ══ INIT ══ */
+window.addEventListener('DOMContentLoaded', () => {
+  const cL = document.getElementById('cloud-L');
+  const cR = document.getElementById('cloud-R');
+  renderClouds(cL);
+  renderClouds(cR);
 
-    <script>
-        const launchBtn = document.getElementById('launchBtn');
-        const acceptBtn = document.getElementById('acceptBtn');
-        const universeContainer = document.getElementById('universeContainer');
-        const solarCursor = document.getElementById('solar-cursor');
-        const successPopup = document.getElementById('successPopup');
-        const popupMessage = document.getElementById('popupMessage');
+  // Re-render curtain canvases on orientation change / resize
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      renderClouds(cL);
+      renderClouds(cR);
+    }, 200);
+  });
 
-        launchBtn.addEventListener('click', () => {
-            universeContainer.classList.add('launched');
-            launchBtn.disabled = true;
-            launchBtn.style.opacity = '0';
-            launchBtn.style.pointerEvents = 'none';
-        });
+  // Curtain opens after 1.8s
+  setTimeout(() => {
+    document.getElementById('curtain').classList.add('open');
+  }, 1800);
+});
 
-        acceptBtn.addEventListener('click', () => {
-            successPopup.classList.add('show');
-            setTimeout(() => {
-                window.close();
-                popupMessage.innerHTML = "Thank you for accepting our invitation.<br><span style='color:#ff9e00;font-weight:bold;'>You may now safely close this tab.</span>";
-            }, 3000);
-        });
+/* ══ LAUNCH & RSVP LOGIC ══ */
+const launchBtn        = document.getElementById('launchBtn');
+const acceptBtn        = document.getElementById('acceptBtn');
+const universeContainer= document.getElementById('universeContainer');
+const successPopup     = document.getElementById('successPopup');
+const popupMessage     = document.getElementById('popupMessage');
 
-        window.addEventListener('mousemove', (e) => {
-            solarCursor.style.left = e.clientX + 'px';
-            solarCursor.style.top = e.clientY + 'px';
-        });
-    </script>
+launchBtn.addEventListener('click', () => {
+  universeContainer.classList.add('launched');
+  launchBtn.disabled = true;
+  launchBtn.style.opacity = '0';
+  launchBtn.style.pointerEvents = 'none';
+});
+
+// Also support touch tap
+launchBtn.addEventListener('touchend', e => {
+  e.preventDefault();
+  if (!universeContainer.classList.contains('launched')) {
+    universeContainer.classList.add('launched');
+    launchBtn.disabled = true;
+    launchBtn.style.opacity = '0';
+    launchBtn.style.pointerEvents = 'none';
+  }
+});
+
+acceptBtn.addEventListener('click', () => {
+  successPopup.classList.add('show');
+  setTimeout(() => {
+    window.close();
+    popupMessage.innerHTML = "Thank you for accepting our invitation.<br><span style='color:#ff9e00;font-weight:bold;'>You may now safely close this tab.</span>";
+  }, 3000);
+});
+</script>
 </body>
 </html>
